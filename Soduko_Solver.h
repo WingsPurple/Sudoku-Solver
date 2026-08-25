@@ -13,6 +13,10 @@
  *
  *  Each solve function stops the moment it finds a single success
  *  Priority is as follows: Column > Row > Square
+ *  Board 1 requires sudoku elimination 
+ *  Board 2 requires single candidate 
+ *  Board 3 and 4 require naked pairs
+ *  Board 5 requires naked triples
  *
  *  Personal notes:
  *  I have not looked at any other sudoku solvers so there may be other already existing solutions that logic better
