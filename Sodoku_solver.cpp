@@ -58,7 +58,8 @@ void sudoku::solve()
         fill_notations_by_sudoku();
         while (solving)
         {
-            solving = solve_by_sudoku().first;
+            solving = std::get<0>(solve_by_naked_pairs());
+            solving |= solve_by_sudoku().first;
             solving |= solve_by_single_candidate().first;
         }
         print_board();

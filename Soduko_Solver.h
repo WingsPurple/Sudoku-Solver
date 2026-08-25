@@ -98,7 +98,7 @@ public:
     // determines if the current board is solvable
     bool is_solvable() const;
 
-    // checks for single candidate in column, row, and square
+    // checks for single candidate in column, row, and square ( does not use notations )
     std::pair<bool, uint16_t>  solve_by_sudoku();
 
     std::pair<bool, uint16_t> solve_by_column(uint16_t col, uint16_t cell);
@@ -108,7 +108,8 @@ public:
     std::pair<bool, uint16_t> solve_by_square(uint16_t col, uint16_t row, uint16_t cell);
     
     
-    // checks one square at a time to see if there is only one valid location for a number
+    // checks one square at a time to see if there is only one valid location for a number 
+    // relies on notations
     std::pair<bool, uint16_t> solve_by_single_candidate();
 
     // uses candidate elimination
@@ -137,5 +138,4 @@ public:
     bool solve_by_y_wing();
 
     bool solve_by_swordfish();
-
 };
