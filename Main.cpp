@@ -3,7 +3,7 @@
 uint16_t main()
 {
     sudoku board;
-    if (board.read("Sudoku boards/board_1.txt") == false)
+    if (board.read("Sudoku boards/board_3.txt") == false)
     {
         return -1;
     }

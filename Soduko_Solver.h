@@ -1,4 +1,5 @@
 ﻿/*  Sudoku Solver by Wings Purple
+ *  Start date: July 15th 2026
  *  Personal coding project for fun
  *  Goals:
  *  Show hints for what techniques can currently be used
@@ -106,18 +107,14 @@ public:
 
     std::pair<bool, uint16_t> solve_by_square(uint16_t col, uint16_t row, uint16_t cell);
     
-
-    // checks each number one at a time by drawing lines from their locations and checking if there are squares
-    // with only one possible location for that number
-    bool solve_by_elimination();
-
+    
     // checks one square at a time to see if there is only one valid location for a number
     std::pair<bool, uint16_t> solve_by_single_candidate();
 
     // uses candidate elimination
     // with the knowledge that elsewhere in that square is occupied with a naked pair
     // (two numbers that can both only be in the same two cells in the square)
-    bool solve_by_naked_pairs();
+    std::tuple<bool, uint16_t, uint16_t> solve_by_naked_pairs();
 
     // same as naked pair but with harder to spot pairs
     bool solve_by_hidden_pairs();
