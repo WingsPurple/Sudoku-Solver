@@ -2,9 +2,8 @@
 
 bool sudoku::read(const std::string& filename)
 {
-    std::ifstream file(filename);
     // read board from a file
-    if (file.is_open())
+    if (std::ifstream file(filename); file.is_open())
     {
         while (file.good())
         {
@@ -76,18 +75,18 @@ bool sudoku::solve_step()
         // check for naked pairs
         if (auto [first, cell1, cell2] = solve_by_naked_pairs(); first)
         {
-            std::cout << "Found a naked pair: " << cell1 << " " << cell2  << std::endl;
+            std::cout << "Found a naked pair: " << cell1 << " " << cell2  << '\n';
         }
         // check for naked triples
         if (auto [found, vect] = solve_by_naked_triples(); found)
         {
-            std::cout << "Found a naked triple at " << vect[0] << " " << vect[1] << " " << vect[2] << std::endl;
+            std::cout << "Found a naked triple at " << vect[0] << " " << vect[1] << " " << vect[2] << '\n';
         }
         // check for sudoku
         std::pair<bool, uint16_t> found_something = solve_by_sudoku();
         if (found_something.first)
         {
-            std::cout << "Solved by sudoku at cell: " << found_something.second + 1 << std::endl;
+            std::cout << "Solved by sudoku at cell: " << found_something.second + 1 << '\n';
             print_board();
             return true;
         }
@@ -95,7 +94,7 @@ bool sudoku::solve_step()
         found_something = solve_by_single_candidate();
         if (found_something.first)
         {
-            std::cout << "Solved by single candidate at cell: " << found_something.second + 1 << std::endl;
+            std::cout << "Solved by single candidate at cell: " << found_something.second + 1 << '\n';
             print_board();
             return true;
         }
@@ -116,8 +115,8 @@ void sudoku::write_notation(const uint8_t cell, const uint8_t number, const uint
         // clear the bit and then set it to the state value
         // since the number will always be 1-9 
         // we only have to add static_cast<uint8_t>(3) to the bit position to shift it correctly
-        board[cell] = (board[cell] & ~(static_cast<uint8_t>(1) << (number + static_cast<uint8_t>(3)))) | 
-            (state << (number + static_cast<uint8_t>(3)));
+        board[cell] = static_cast<uint16_t>(board[cell] & ~(static_cast<uint8_t>(1) << 
+            (number + static_cast<uint8_t>(3)))) | static_cast<uint16_t>(state << (number + static_cast<uint8_t>(3)));
     }
 }
 
