@@ -403,7 +403,7 @@ std::pair<bool, uint16_t> sudoku::solve_by_single_candidate()
                 }
                 if (get_notation(i, number))
                 {
-                    counter += static_cast<uint8_t>(1);
+                    counter++;
                     cell = i;
                 }
             }
@@ -428,7 +428,7 @@ std::pair<bool, uint16_t> sudoku::solve_by_single_candidate()
                 }
                 if (get_notation(cell, number))
                 {
-                    counter += static_cast<uint8_t>(1);
+                    counter++;
                     found = cell;
                 }
             }
@@ -441,7 +441,7 @@ std::pair<bool, uint16_t> sudoku::solve_by_single_candidate()
         }
         // check all squares
         // iterate through all squares
-        for (uint8_t cell = 0; cell < static_cast<uint8_t>(81); cell += 7)
+        for (uint8_t cell = 0; cell < static_cast<uint8_t>(81); cell += static_cast<uint8_t>(7))
         {
             // calculate the current row and column
             const uint8_t col = (cell % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
@@ -470,7 +470,7 @@ std::pair<bool, uint16_t> sudoku::solve_by_single_candidate()
                     }
                     if (get_notation(index, number))
                     {
-                        counter += static_cast<uint8_t>(1);
+                        counter++;
                         found = index;
                     }
                 }
@@ -498,7 +498,7 @@ std::tuple<bool, uint16_t, uint16_t> sudoku::solve_by_naked_pairs()
         {
             if (get_notation(cell, i) == true)
             {
-                count += static_cast<uint8_t>(1);
+                count++;
                 pair1.push_back(i);
             }
         }
@@ -522,7 +522,7 @@ std::tuple<bool, uint16_t, uint16_t> sudoku::solve_by_naked_pairs()
                 {
                     if (get_notation(i, j) == true)
                     {
-                        count += static_cast<uint8_t>(1);
+                        count++;
                         pair2.push_back(j);
                     }
                 }
@@ -636,7 +636,7 @@ std::tuple<bool, uint16_t, uint16_t> sudoku::solve_by_naked_pairs()
                     {
                         if (get_notation(index, k) == true)
                         {
-                            count += static_cast<uint8_t>(1);
+                            count++;
                             pair2.push_back(k);
                         }
                     }
@@ -679,7 +679,7 @@ std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
         {
             if (get_notation(cell, i) == true)
             {
-                count += static_cast<uint8_t>(1);
+                count++;
                 triple1.push_back(i);
             }
         }
@@ -705,7 +705,7 @@ std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
                 {
                     if (get_notation(i, j) == true)
                     {
-                        count += static_cast<uint8_t>(1);
+                        count++;
                         triple2.push_back(j);
                     }
                 }
@@ -751,7 +751,7 @@ std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
                 {
                     if (get_notation(index, j) == true)
                     {
-                        count += static_cast<uint8_t>(1);
+                        count++;
                         triple2.push_back(j);
                     }
                 }
@@ -803,7 +803,7 @@ std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
                     {
                         if (get_notation(index, k) == true)
                         {
-                            count += static_cast<uint8_t>(1);
+                            count++;
                             triple2.push_back(k);
                         }
                     }
@@ -861,7 +861,7 @@ bool sudoku::tiple_or_quad(const std::vector<uint8_t>& list, const std::vector<u
         {
             if (i == j)
             {
-                count += static_cast<uint8_t>(1);
+                count++;
                 break;
             }
         }
