@@ -673,12 +673,12 @@ std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
                     && tiple_or_quad(triple1, triple2) == true)
                 {
                     // if a cell with 2/3 or 3/3 notations is found remember it
-                    if (cell2 == 100)
+                    if (cell2 == static_cast<uint8_t>(100))
                     {
                         cell2 = i;
                     }
                     // if a third is found remove the notations for the 3 numbers from the rest of the column
-                    if (cell2 != 100 && cell2 != i)
+                    if (cell2 != static_cast<uint8_t>(100) && cell2 != i)
                     {
                         for (uint8_t k = col; k < static_cast<uint8_t>(81); k += static_cast<uint8_t>(9))
                         {
@@ -719,12 +719,12 @@ std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
                     && tiple_or_quad(triple1, triple2) == true)
                 {
                     // if a cell with 2/3 or 3/3 notations is found remember it
-                    if (cell2 == 100)
+                    if (cell2 == static_cast<uint8_t>(100))
                     {
                         cell2 = index;
                     }
                     // if a third is found remove the notations for the 3 numbers from the rest of the row
-                    if (cell2 != 100 && cell2 != index)
+                    if (cell2 != static_cast<uint8_t>(100) && cell2 != index)
                     {
                         for (uint8_t k = 0; k < static_cast<uint8_t>(9); k++)
                         {
@@ -771,12 +771,12 @@ std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
                         && tiple_or_quad(triple1, triple2) == true)
                     {
                         // if a cell with 2/3 or 3/3 notations is found remember it
-                        if (cell2 == 100)
+                        if (cell2 == static_cast<uint8_t>(100))
                         {
                             cell2 = index;
                         }
                         // if a third is found remove the notations for the 3 numbers from the rest of the square
-                        if (cell2 != 100 && cell2 != index)
+                        if (cell2 != static_cast<uint8_t>(100) && cell2 != index)
                         {
                             // iterate through rows
                             for (uint8_t k = 0; k < static_cast<uint8_t>(3); k++)
@@ -821,12 +821,12 @@ bool sudoku::tiple_or_quad(const std::vector<uint8_t>& list, const std::vector<u
         {
             if (i == j)
             {
-                count += 1;
+                count += static_cast<uint8_t>(1);
                 break;
             }
         }
     }
-    if (count > 1)
+    if (count > static_cast<uint8_t>(1))
     {
         return true;
     }
