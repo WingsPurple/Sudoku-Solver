@@ -86,12 +86,12 @@ public:
     void print_board() const;
 
     // write a notation for a cell
-    void write_notation(const uint16_t cell, const uint16_t number, const uint16_t state);
+    void write_notation(const uint8_t cell, const uint8_t number, const uint8_t state);
 
-    void update_notation(const uint16_t cell, const uint16_t number);
+    void update_notation(const uint8_t cell);
 
     // read a notation for a cell
-    bool get_notation(const uint16_t cell, const uint16_t number) const;
+    bool get_notation(const uint8_t cell, const uint8_t number) const;
 
     // fills in all notations using only sudoku (row, column, square elimination)
     void fill_notations_by_sudoku();
@@ -103,13 +103,13 @@ public:
     bool is_solvable() const;
 
     // checks for single candidate in column, row, and square ( does not use notations )
-    std::pair<bool, uint16_t>  solve_by_sudoku();
+    std::pair<bool, uint8_t>  solve_by_sudoku();
 
-    std::pair<bool, uint16_t> solve_by_column(uint16_t col, uint16_t cell);
+    std::pair<bool, uint8_t> solve_by_column(uint8_t col, uint8_t cell);
 
-    std::pair<bool, uint16_t> solve_by_row(uint16_t row, uint16_t cell);
+    std::pair<bool, uint8_t> solve_by_row(uint8_t row, uint8_t cell);
 
-    std::pair<bool, uint16_t> solve_by_square(uint16_t col, uint16_t row, uint16_t cell);
+    std::pair<bool, uint8_t> solve_by_square(uint8_t col, uint8_t row, uint8_t cell);
     
     
     // checks one square at a time to see if there is only one valid location for a number 
