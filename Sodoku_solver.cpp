@@ -74,14 +74,12 @@ bool sudoku::solve_step()
         // write all basic notations
         fill_notations_by_sudoku();
         // check for naked pairs
-        auto [first, cell1, cell2] = solve_by_naked_pairs();
-        if (first)
+        if (auto [first, cell1, cell2] = solve_by_naked_pairs(); first)
         {
             std::cout << "Found a naked pair: " << cell1 << " " << cell2  << std::endl;
         }
         // check for naked triples
-        auto [found, vect] = solve_by_naked_triples();
-        if (found)
+        if (auto [found, vect] = solve_by_naked_triples(); found)
         {
             std::cout << "Found a naked triple at " << vect[0] << " " << vect[1] << " " << vect[2] << std::endl;
         }
@@ -125,7 +123,7 @@ void sudoku::write_notation(const uint8_t cell, const uint8_t number, const uint
 
 void sudoku::update_notation(const uint8_t cell)
 {
-    uint8_t number = static_cast<uint8_t>((*this)[cell]);
+    const uint8_t number = static_cast<uint8_t>((*this)[cell]);
     const uint8_t col = cell % static_cast<uint8_t>(9);
     const uint8_t row = cell / static_cast<uint8_t>(9);
     // iterate through the column
@@ -301,7 +299,7 @@ std::pair<bool, uint8_t> sudoku::solve_by_square(const uint8_t col, const uint8_
 
 void sudoku::fill_notations_by_sudoku()
 {
-    std::vector possibilities(81, std::vector<uint8_t>(9, 1));
+    std::vector possibilities(static_cast<uint8_t>(81), std::vector<uint8_t>(9, 1));
     // iterate through all columns
     for (uint8_t col = 0; col < static_cast<uint8_t>(9); col++)
     {
@@ -549,7 +547,6 @@ std::tuple<bool, uint16_t, uint16_t> sudoku::solve_by_naked_pairs()
             {
                 count = static_cast<uint8_t>(0);
                 std::vector<uint8_t> pair2{};
-                // @todo BY ALL MEANS THIS SHOULD JUST BE ROW AND NOT S_ROW BUT THAT BREAKS IT I DONT GET IT
                 const uint8_t index = row * static_cast<uint8_t>(9) + i;
                 // ignore the cell we already found
                 if (index == cell)
