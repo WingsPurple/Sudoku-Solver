@@ -35,6 +35,8 @@
  *
  *  Since bitwise operations are pretty fast I am hoping it won't significantly increase the runtime
  *  of the program compared to the 2d vector idea and just letting me benefit fro the smaller memory usage
+ *  
+ *  Using 8 bit for everything that can be 8 bit not sure if speed optimal but I have a brainworm for it
  *
  *  From what I understand everything gets converted to 64 bits in the alu so the only memory it saves would be in ram
  */
@@ -69,6 +71,7 @@ public:
         return board[index] & MASK;
     }
     
+    // const version
     uint16_t operator[](size_t index) const {
         return board[index] & MASK;
     }
@@ -88,6 +91,8 @@ public:
     // write a notation for a cell
     void write_notation(const uint8_t cell, const uint8_t number, const uint8_t state);
 
+    // helper funtion for writing to a cell
+    // deletes all notation of the relevant number in that row/column/square
     void update_notation(const uint8_t cell);
 
     // read a notation for a cell
@@ -121,21 +126,30 @@ public:
     // (two numbers that can both only be in the same two cells in the square)
     std::tuple<bool, uint16_t, uint16_t> solve_by_naked_pairs();
 
-    // same as naked pair but with harder to spot pairs
+    // uses candidate elimination by identifying triples
+    // (three numbers that all only appear as candidates in the same three cells within the column/row/square)
+    // only cell needs to contain all three the other two cells just need to contain at least two of the same three 
+    // as the one with all three
+    std::pair<bool, std::vector<uint16_t>> solve_by_naked_triples();
+    
+    // uses candidate elimination by identifying quads
+    // (four numbers that all only appear as candidates in the same four cells within the column/row/square)
+    // only cell needs to contain all four the other two cells just need to contain at least two of the same four 
+    // as the one with all four
+    std::pair<bool, std::vector<uint16_t>> solve_by_naked_quads();
+    
+    // helper function for triples and quads
+    // checks if at least 2 of the notations are the same between vectors
+    static bool tiple_or_quad(const std::vector<uint8_t>& list, const std::vector<uint8_t>& candidate);
+    
+    // same as naked pair but other notations are in the cells with the pairs
     bool solve_by_hidden_pairs();
 
-    // uses candidate elimination by identifying triples within a square
-    // (three numbers that all only appear as candidates in the same three cells within the square)
-    bool solve_by_naked_triples();
-
-    // same as naked triple but with harder to spot triples
+    // same as naked triples but other notations are in the cells with the pairs
     bool solve_by_hidden_triples();
-
-    // does candidate elimination using naked/hidden pairs
-    bool solve_by_pointing_pairs();
-
-    // does candidate elimination using naked/hidden triples
-    bool solve_by_pointing_triples();
+    
+    // same as naked pair but other notations are in the cells with the pairs
+    bool solve_by_hidden_quads();
 
     bool solve_by_x_wing();
 
