@@ -83,7 +83,7 @@ public:
     void solve();
 
     // solve one step
-    void solve_step();
+    bool solve_step();
 
     // prints the current board
     void print_board() const;

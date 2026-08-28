@@ -67,7 +67,7 @@ void sudoku::solve()
     }
 }
 
-void sudoku::solve_step()
+bool sudoku::solve_step()
 {
     if (is_solvable())
     {
@@ -79,18 +79,19 @@ void sudoku::solve_step()
         {
             std::cout << "Found a naked pair: " << cell1 << " " << cell2  << std::endl;
         }
+        // check for naked triples
+        auto [found, vect] = solve_by_naked_triples();
+        if (found)
+        {
+            std::cout << "Found a naked triple at " << vect[0] << " " << vect[1] << " " << vect[2] << std::endl;
+        }
         // check for sudoku
-        //auto [found, vect] = solve_by_naked_triples();
-        //if (found)
-        //{
-        //    std::cout << "Found a naked triple at " << vect[0] << " " << vect[1] << " " << vect[2] << std::endl;
-        //}
         std::pair<bool, uint16_t> found_something = solve_by_sudoku();
         if (found_something.first)
         {
             std::cout << "Solved by sudoku at cell: " << found_something.second + 1 << std::endl;
             print_board();
-            return;
+            return true;
         }
         // check for single candidate
         found_something = solve_by_single_candidate();
@@ -98,9 +99,10 @@ void sudoku::solve_step()
         {
             std::cout << "Solved by single candidate at cell: " << found_something.second + 1 << std::endl;
             print_board();
-            return;
+            return true;
         }
     }
+    return false;
 }
 
 bool sudoku::is_solvable() const
@@ -548,7 +550,7 @@ std::tuple<bool, uint16_t, uint16_t> sudoku::solve_by_naked_pairs()
                 count = static_cast<uint8_t>(0);
                 std::vector<uint8_t> pair2{};
                 // @todo BY ALL MEANS THIS SHOULD JUST BE ROW AND NOT S_ROW BUT THAT BREAKS IT I DONT GET IT
-                const uint8_t index = s_row * static_cast<uint8_t>(9) + i;
+                const uint8_t index = row * static_cast<uint8_t>(9) + i;
                 // ignore the cell we already found
                 if (index == cell)
                 {
