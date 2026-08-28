@@ -136,7 +136,7 @@ void sudoku::update_notation(const uint8_t cell)
         write_notation(row * static_cast<uint8_t>(9) + i, number, 0);
     }
     // iterate through the square
-    const uint8_t s_col = (cell %static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
+    const uint8_t s_col = (cell % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
     const uint8_t s_row = (cell /static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
     for (uint8_t i = 0; i < static_cast<uint8_t>(3); i++)
     {
@@ -331,7 +331,7 @@ void sudoku::fill_notations_by_sudoku()
         }
     }
     // iterate through all squares
-    for (uint8_t cell = 0; cell < static_cast<uint8_t>(81); cell ++)
+    for (uint8_t cell = 0; cell < static_cast<uint8_t>(81); cell++)
     {
         // calculate the current row and column
         const uint16_t col = (cell % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
@@ -415,11 +415,11 @@ std::pair<bool, uint16_t> sudoku::solve_by_single_candidate()
             }
         }
         // check all rows
-        for (uint8_t row = 0; row < static_cast<uint8_t>(9); ++row)
+        for (uint8_t row = 0; row < static_cast<uint8_t>(9); row++)
         {
             uint8_t counter = 0;
             uint8_t found = 0;
-            for (uint8_t i = 0; i < static_cast<uint8_t>(9); i ++)
+            for (uint8_t i = 0; i < static_cast<uint8_t>(9); i++)
             {
                 const uint8_t cell = row * static_cast<uint8_t>(9) + i;
                 if ((*this)[cell] == number)
@@ -506,9 +506,9 @@ std::tuple<bool, uint16_t, uint16_t> sudoku::solve_by_naked_pairs()
         if (count == static_cast<uint8_t>(2))
         {
             const uint8_t row = cell /static_cast<uint8_t>(9);
-            const uint8_t col = cell %static_cast<uint8_t>(9);
+            const uint8_t col = cell % static_cast<uint8_t>(9);
             const uint8_t s_row = (cell /static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
-            const uint8_t s_col = (cell %static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
+            const uint8_t s_col = (cell % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
             // check current column
             for (uint8_t i = col; i < static_cast<uint8_t>(81); i += static_cast<uint8_t>(9))
             {
@@ -529,6 +529,26 @@ std::tuple<bool, uint16_t, uint16_t> sudoku::solve_by_naked_pairs()
                 // if an identical pair is found remove the found notations from the rest of the column
                 if (count == static_cast<uint8_t>(2) && pair1 == pair2)
                 {
+                    // if the pair is within the same square
+                    if (s_col == (i % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3))
+                    {
+                        // iterate through rows
+                        for (uint8_t k = 0; k < static_cast<uint8_t>(3); k++)
+                        {
+                            // iterate within row
+                            for (uint8_t l = 0; l < static_cast<uint8_t>(3); l++)
+                            {
+                                const uint8_t final_index = (s_row * static_cast<uint8_t>(3) + k) * 
+                                    static_cast<uint8_t>(9) + (s_col * static_cast<uint8_t>(3) + l);
+                                if (final_index == cell || final_index == i)
+                                {
+                                    continue;
+                                }
+                                write_notation(final_index, pair1.front(), 0);
+                                write_notation(final_index, pair1.back(), 0);
+                            }
+                        }
+                    }
                     for (uint8_t k = col; k < static_cast<uint8_t>(81); k += static_cast<uint8_t>(9))
                     {
                         if (k == cell || k == i)
@@ -563,14 +583,35 @@ std::tuple<bool, uint16_t, uint16_t> sudoku::solve_by_naked_pairs()
                 // if an identical pair is found remove the found notations from the rest of the row
                 if (count == static_cast<uint8_t>(2) && pair1 == pair2)
                 {
+                    // if the pair is within the same square
+                    if (s_row == (index % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3))
+                    {
+                        // iterate through rows
+                        for (uint8_t k = 0; k < static_cast<uint8_t>(3); k++)
+                        {
+                            // iterate within row
+                            for (uint8_t l = 0; l < static_cast<uint8_t>(3); l++)
+                            {
+                                const uint8_t final_index = (s_row * static_cast<uint8_t>(3) + k) * 
+                                    static_cast<uint8_t>(9) + (s_col * static_cast<uint8_t>(3) + l);
+                                if (final_index == cell || final_index == index)
+                                {
+                                    continue;
+                                }
+                                write_notation(final_index, pair1.front(), 0);
+                                write_notation(final_index, pair1.back(), 0);
+                            }
+                        }
+                    }
                     for (uint8_t k = 0; k < static_cast<uint8_t>(9); k++)
                     {
-                        if (row * static_cast<uint8_t>(9) + k == cell || row * static_cast<uint8_t>(9) + k == index)
+                        const uint8_t temp = row * static_cast<uint8_t>(9) + k;
+                        if (temp == cell || temp == index)
                         {
                             continue;
                         }
-                        write_notation(row * static_cast<uint8_t>(9) + k, pair1.front(), 0);
-                        write_notation(row * static_cast<uint8_t>(9) + k, pair1.back(), 0);
+                        write_notation(temp, pair1.front(), 0);
+                        write_notation(temp, pair1.back(), 0);
                     }
                     return {true, cell, index};
                 }
@@ -648,9 +689,9 @@ std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
             // cell 100 is not a valid cell so it is used instead of -1
             uint8_t cell2 = 100;
             const uint8_t row = cell /static_cast<uint8_t>(9);
-            const uint8_t col = cell %static_cast<uint8_t>(9);
+            const uint8_t col = cell % static_cast<uint8_t>(9);
             const uint8_t s_row = (cell /static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
-            const uint8_t s_col = (cell %static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
+            const uint8_t s_col = (cell % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
             // check current column
             for (uint8_t i = col; i < static_cast<uint8_t>(81); i += static_cast<uint8_t>(9))
             {

@@ -10,9 +10,9 @@ uint8_t main()
 {
     //test1_sudoku();
     //test2_single_candidate();
-    //test3_naked_pairs();
+    test3_naked_pairs();
     //test4_hidden_pairs();
-    test5_naked_triples();
+    //test5_naked_triples();
     return 0;
 }
 

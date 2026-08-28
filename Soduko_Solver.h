@@ -67,12 +67,12 @@ public:
     // not really happy having to use (*this)[] when reading and board[] when writing
     // not sure how to make it so that I can just use one or the other
     // it ddoes make it so writing automatically removes the notations which is nice
-    uint16_t operator[](size_t index) {
+    uint16_t operator[](const size_t index) {
         return board[index] & MASK;
     }
     
     // const version
-    uint16_t operator[](size_t index) const {
+    uint16_t operator[](const size_t index) const {
         return board[index] & MASK;
     }
 
@@ -91,7 +91,7 @@ public:
     // write a notation for a cell
     void write_notation(const uint8_t cell, const uint8_t number, const uint8_t state);
 
-    // helper funtion for writing to a cell
+    // helper function for writing to a cell
     // deletes all notation of the relevant number in that row/column/square
     void update_notation(const uint8_t cell);
 
