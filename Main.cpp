@@ -10,8 +10,8 @@ uint8_t main()
 {
     //test1_sudoku();
     //test2_single_candidate();
-    test3_naked_pairs();
-    //test4_hidden_pairs();
+    //test3_naked_pairs();
+    test4_hidden_pairs();
     //test5_naked_triples();
     return 0;
 }
@@ -28,7 +28,15 @@ uint8_t test1_sudoku()
     {
         board.solve_step();
     }
-    return 0;
+    sudoku solution;
+    solution.read("Sudoku boards/Board_1_and_2_solution.txt");
+    if (solution.board == board.board)
+    {
+        std::cout << "Solution is correct " << std::endl;
+        return 0;
+    }
+    std::cout << "Solution is incorrect " << std::endl;
+    return -1;
 }
 
 uint8_t test2_single_candidate()
@@ -43,13 +51,21 @@ uint8_t test2_single_candidate()
     {
         board.solve_step();
     }
-    return 0;
+    sudoku solution;
+    solution.read("Sudoku boards/Board_1_and_2_solution.txt");
+    if (solution.board == board.board)
+    {
+        std::cout << "Solution is correct " << std::endl;
+        return 0;
+    }
+    std::cout << "Solution is incorrect " << std::endl;
+    return -1;
 }
 
 uint8_t test3_naked_pairs()
 {
     sudoku board;
-    if (board.read("Sudoku boards/Board_3_naked_pairs.txt") == false)
+    if (board.read("Sudoku boards/Board_3_solution.txt") == false)
     {
         return -1;
     }
@@ -58,7 +74,15 @@ uint8_t test3_naked_pairs()
     {
         board.solve_step();
     }
-    return 0;
+    sudoku solution;
+    solution.read("Sudoku boards/Board_3_solution.txt");
+    if (solution.board == board.board)
+    {
+        std::cout << "Solution is correct " << std::endl;
+        return 0;
+    }
+    std::cout << "Solution is incorrect " << std::endl;
+    return -1;
 }
 
 uint8_t test4_hidden_pairs()
@@ -73,7 +97,15 @@ uint8_t test4_hidden_pairs()
     {
         board.solve_step();
     }
-    return 0;
+    sudoku solution;
+    solution.read("Sudoku boards/Board_4_solution.txt");
+    if (solution.board == board.board)
+    {
+        std::cout << "Solution is correct " << std::endl;
+        return 0;
+    }
+    std::cout << "Solution is incorrect " << std::endl;
+    return -1;
 }
 
 uint8_t test5_naked_triples()
@@ -88,5 +120,13 @@ uint8_t test5_naked_triples()
     {
         board.solve_step();
     }
-    return 0;
+    sudoku solution;
+    solution.read("Sudoku boards/Board_5_solution.txt");
+    if (solution.board == board.board)
+    {
+        std::cout << "Solution is correct " << std::endl;
+        return 0;
+    }
+    std::cout << "Solution is incorrect " << std::endl;
+    return -1;
 }

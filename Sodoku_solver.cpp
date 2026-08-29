@@ -18,7 +18,7 @@ bool sudoku::read(const std::string& filename)
         std::cerr << "Can't find input file " << filename << std::endl;
         return false;
     }
-    if (board.size() !=static_cast<uint8_t>(81))
+    if (board.size() != static_cast<uint8_t>(81))
     {
         std::cout << "Invalid board size" << std::endl;
         // reset board to be empty
@@ -137,7 +137,7 @@ void sudoku::update_notation(const uint8_t cell)
     }
     // iterate through the square
     const uint8_t s_col = (cell % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
-    const uint8_t s_row = (cell /static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
+    const uint8_t s_row = (cell / static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
     for (uint8_t i = 0; i < static_cast<uint8_t>(3); i++)
     {
         for (uint8_t j = 0; j < static_cast<uint8_t>(3); j++)
@@ -505,9 +505,9 @@ std::tuple<bool, uint16_t, uint16_t> sudoku::solve_by_naked_pairs()
         // if a cell is found with exactly 2 notations try to find another with the same exact 2 notations
         if (count == static_cast<uint8_t>(2))
         {
-            const uint8_t row = cell /static_cast<uint8_t>(9);
+            const uint8_t row = cell / static_cast<uint8_t>(9);
             const uint8_t col = cell % static_cast<uint8_t>(9);
-            const uint8_t s_row = (cell /static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
+            const uint8_t s_row = (cell / static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
             const uint8_t s_col = (cell % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
             // check current column
             for (uint8_t i = col; i < static_cast<uint8_t>(81); i += static_cast<uint8_t>(9))
@@ -688,9 +688,9 @@ std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
         {
             // cell 100 is not a valid cell so it is used instead of -1
             uint8_t cell2 = 100;
-            const uint8_t row = cell /static_cast<uint8_t>(9);
+            const uint8_t row = cell / static_cast<uint8_t>(9);
             const uint8_t col = cell % static_cast<uint8_t>(9);
-            const uint8_t s_row = (cell /static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
+            const uint8_t s_row = (cell / static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
             const uint8_t s_col = (cell % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
             // check current column
             for (uint8_t i = col; i < static_cast<uint8_t>(81); i += static_cast<uint8_t>(9))
