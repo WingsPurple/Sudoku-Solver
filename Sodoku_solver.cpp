@@ -118,6 +118,7 @@ bool sudoku::solve_step()
 
 bool sudoku::is_solvable() const
 {
+    // temporarily set to always true
     // std::cout << "Board is unsolvable" << std::endl;
     return true;
 }
@@ -345,6 +346,9 @@ void sudoku::fill_notations_by_sudoku()
     for (uint8_t cell = 0; cell < static_cast<uint8_t>(81); cell++)
     {
         // calculate the current row and column of the square
+        // top left square is 0, 0, top middle square is 1, 0, top right square is 2, 0
+        // middle left square is 0, 1, middle square is 1, 1, middle right square is 2, 1
+        // bottom left square is 0, 2, bottom middle square is 1, 2, bottom right square is 2, 2
         const uint16_t s_col = (cell % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
         const uint16_t s_row = (cell / static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
         // iterate through rows of the square
@@ -407,6 +411,7 @@ bool sudoku::solve_by_single_candidate()
             uint8_t cell = 0;
             for (uint8_t i = col; i < static_cast<uint8_t>(81); i += static_cast<uint8_t>(9))
             {
+                // if the number is already in the column skip to the next one
                 if ((*this)[i] == number)
                 {
                     break;
@@ -417,6 +422,7 @@ bool sudoku::solve_by_single_candidate()
                     cell = i;
                 }
             }
+            // if the number is only found once as a notation then write it to the cell
             if (counter == static_cast<uint8_t>(1))
             {
                 write(cell, number, SINGLE);
@@ -431,6 +437,7 @@ bool sudoku::solve_by_single_candidate()
             for (uint8_t i = 0; i < static_cast<uint8_t>(9); i++)
             {
                 const uint8_t cell = row * static_cast<uint8_t>(9) + i;
+                // if the number is already in the row skip to the next one
                 if ((*this)[cell] == number)
                 {
                     break;
@@ -441,6 +448,7 @@ bool sudoku::solve_by_single_candidate()
                     found = cell;
                 }
             }
+            // if the number is only found once as a notation then write it to the cell
             if (counter == static_cast<uint8_t>(1))
             {
                 write(found, number, SINGLE);
@@ -483,6 +491,7 @@ bool sudoku::solve_by_single_candidate()
                     }
                 }
             }
+            // if the number is only found once as a notation then write it to the cell
             if (counter == static_cast<uint8_t>(1))
             {
                 write(found, number, SINGLE);
@@ -493,12 +502,14 @@ bool sudoku::solve_by_single_candidate()
     return false;
 }
 
-
+// solve_by_naked_pairs, solve_by_naked_triples are stumping me with what's wrong
+// I am considering turning them into separate functions for col row square 
 void sudoku::solve_by_naked_pairs()
 {
     // iterate through whole board
     for (uint8_t cell = 0; cell < static_cast<uint8_t>(81); cell++)
     {
+        // make a list of all notations in the current cell
         uint8_t count = 0;
         std::vector<uint8_t> pair1{};
         for (uint8_t i = 1; i <= static_cast<uint8_t>(9); i++)
@@ -512,19 +523,26 @@ void sudoku::solve_by_naked_pairs()
         // if a cell is found with exactly 2 notations try to find another with the same exact 2 notations
         if (count == static_cast<uint8_t>(2))
         {
+            // using 100 as the out of bounds/unset value since I can't do -1
             uint8_t found1 = 100;
             uint8_t found2 = 100;
             const uint8_t row = cell / static_cast<uint8_t>(9);
             const uint8_t col = cell % static_cast<uint8_t>(9);
+            // calculate the current row and column of the square
+            // top left square is 0, 0, top middle square is 1, 0, top right square is 2, 0
+            // middle left square is 0, 1, middle square is 1, 1, middle right square is 2, 1
+            // bottom left square is 0, 2, bottom middle square is 1, 2, bottom right square is 2, 2
             const uint8_t s_row = (cell / static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
             const uint8_t s_col = (cell % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
             // check current column
             for (uint8_t i = col; i < static_cast<uint8_t>(81); i += static_cast<uint8_t>(9))
             {
+                // ignore the cell we already found
                 if (i == cell)
                 {
                     continue;
                 }
+                // make a list of all notations in the current cell
                 count = static_cast<uint8_t>(0);
                 std::vector<uint8_t> pair2{};
                 for (uint8_t j = 1; j <= static_cast<uint8_t>(9); j++)
@@ -575,6 +593,7 @@ void sudoku::solve_by_naked_pairs()
             // check current row
             for (uint8_t i = 0; i < static_cast<uint8_t>(9); i++)
             {
+                // make a list of all notations in the current cell
                 count = static_cast<uint8_t>(0);
                 std::vector<uint8_t> pair2{};
                 const uint8_t index = row * static_cast<uint8_t>(9) + i;
@@ -635,12 +654,13 @@ void sudoku::solve_by_naked_pairs()
                 // iterate within row
                 for (uint8_t j = 0; j < static_cast<uint8_t>(3); j++)
                 {
+                    // make a list of all notations in the current cell
                     count = static_cast<uint8_t>(0);
                     std::vector<uint8_t> pair2{};
                     // index is the cell in the square we are checking
                     const uint8_t index = (s_row * static_cast<uint8_t>(3) + i) *
                         static_cast<uint8_t>(9) + (s_col * static_cast<uint8_t>(3) + j);
-                    // ignore the cell we already found
+                    // ignore the cells we already found
                     if (cell == index || index == found1 || index == found2)
                     {
                         continue;
@@ -681,11 +701,14 @@ void sudoku::solve_by_naked_pairs()
     }
 }
 
+// solve_by_naked_pairs, solve_by_naked_triples are stumping me with what's wrong
+// I am considering turning them into separate functions for col row square 
 void sudoku::solve_by_naked_triples()
 {
     // iterate through whole board
     for (uint8_t cell = 0; cell < static_cast<uint8_t>(81); cell++)
     {
+        // make a list of all notations in the current cell
         uint8_t count = 0;
         std::vector<uint8_t> triple1{};
         for (uint8_t i = 1; i <= static_cast<uint8_t>(9); i++)
@@ -699,10 +722,14 @@ void sudoku::solve_by_naked_triples()
         // if a cell is found with exactly 3 notations try to find 2 more with at least 2 of the same 3 notations
         if (count == static_cast<uint8_t>(3))
         {
-            // cell 100 is not a valid cell so it is used instead of -1
+            // using 100 as the out of bounds/unset value since I can't do -1
             uint8_t cell2 = 100;
             const uint8_t row = cell / static_cast<uint8_t>(9);
             const uint8_t col = cell % static_cast<uint8_t>(9);
+            // calculate the current row and column of the square
+            // top left square is 0, 0, top middle square is 1, 0, top right square is 2, 0
+            // middle left square is 0, 1, middle square is 1, 1, middle right square is 2, 1
+            // bottom left square is 0, 2, bottom middle square is 1, 2, bottom right square is 2, 2
             const uint8_t s_row = (cell / static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
             const uint8_t s_col = (cell % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
             // check current column
@@ -713,6 +740,7 @@ void sudoku::solve_by_naked_triples()
                 {
                     continue;
                 }
+                // make a list of all notations in the current cell
                 count = static_cast<uint8_t>(0);
                 std::vector<uint8_t> triple2{};
                 for (uint8_t j = 1; j <= static_cast<uint8_t>(9); j++)
@@ -776,6 +804,7 @@ void sudoku::solve_by_naked_triples()
             // check current row
             for (uint8_t i = 0; i < static_cast<uint8_t>(9); i++)
             {
+                // make a list of all notations in the current cell
                 count = static_cast<uint8_t>(0);
                 std::vector<uint8_t> triple2{};
                 const uint8_t index = row * static_cast<uint8_t>(9) + i;
@@ -849,6 +878,7 @@ void sudoku::solve_by_naked_triples()
                 // iterate within row
                 for (uint8_t j = 0; j < static_cast<uint8_t>(3); j++)
                 {
+                    // make a list of all notations in the current cell
                     count = static_cast<uint8_t>(0);
                     std::vector<uint8_t> triple2{};
                     // index is the cell in the square we are checking
@@ -906,10 +936,12 @@ void sudoku::solve_by_naked_triples()
     }
 }
 
+/*
 std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_quads()
 {
     return {false, std::vector<uint16_t>{}};
 }
+*/
 
 bool sudoku::tiple_or_quad(const std::vector<uint8_t>& list, const std::vector<uint8_t>& candidate)
 {
