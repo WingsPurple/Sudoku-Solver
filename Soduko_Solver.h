@@ -51,6 +51,12 @@
 
 class sudoku
 {
+    enum type
+    {
+        NONE,
+        SUDOKU,
+        SINGLE
+    };
 public:
     // initialize empty board
     sudoku()
@@ -78,6 +84,9 @@ public:
 
     // read in the board from a file
     bool read(const std::string& filename);
+    
+    // write to a cell
+    void write(uint8_t cell, uint16_t number, type t);
 
     // keep going until the board is solved
     void solve();
@@ -86,7 +95,7 @@ public:
     bool solve_step();
 
     // prints the current board
-    void print_board() const;
+    void print_board(uint8_t highlight = 100, type t = NONE) const;
 
     // write a notation for a cell
     void write_notation(const uint8_t cell, const uint8_t number, const uint8_t state);
@@ -108,29 +117,29 @@ public:
     bool is_solvable() const;
 
     // checks for single candidate in column, row, and square ( does not use notations )
-    std::pair<bool, uint8_t>  solve_by_sudoku();
+    bool solve_by_sudoku();
 
-    std::pair<bool, uint8_t> solve_by_column(uint8_t col, uint8_t cell);
+    bool solve_by_column(uint8_t col, uint8_t cell);
 
-    std::pair<bool, uint8_t> solve_by_row(uint8_t row, uint8_t cell);
+    bool solve_by_row(uint8_t row, uint8_t cell);
 
-    std::pair<bool, uint8_t> solve_by_square(uint8_t col, uint8_t row, uint8_t cell);
+    bool solve_by_square(uint8_t col, uint8_t row, uint8_t cell);
     
     
     // checks one square at a time to see if there is only one valid location for a number 
     // relies on notations
-    std::pair<bool, uint16_t> solve_by_single_candidate();
+    bool solve_by_single_candidate();
 
     // uses candidate elimination
     // with the knowledge that elsewhere in that square is occupied with a naked pair
     // (two numbers that can both only be in the same two cells in the square)
-    std::tuple<bool, uint16_t, uint16_t> solve_by_naked_pairs();
+    void solve_by_naked_pairs();
 
     // uses candidate elimination by identifying triples
     // (three numbers that all only appear as candidates in the same three cells within the column/row/square)
     // only cell needs to contain all three the other two cells just need to contain at least two of the same three 
     // as the one with all three
-    std::pair<bool, std::vector<uint16_t>> solve_by_naked_triples();
+    void solve_by_naked_triples();
     
     // uses candidate elimination by identifying quads
     // (four numbers that all only appear as candidates in the same four cells within the column/row/square)

@@ -28,11 +28,33 @@ bool sudoku::read(const std::string& filename)
     return true;
 }
 
-void sudoku::print_board() const
+void sudoku::write(const uint8_t cell, const uint16_t number, const type t)
 {
+    board[cell] = number;
+    update_notation(cell);
+    print_board(cell, t);
+}
+
+void sudoku::print_board(const uint8_t highlight, const type t) const
+{
+    if (t == SUDOKU)
+    {
+        std::cout << "Solved By Sudoku: \n";
+    }
+    if (t == SINGLE)
+    {
+        std::cout << "Solved By Single Candidate: \n";
+    }
     for (uint8_t i = 0; i < static_cast<uint8_t>(81); i++)
     {
-        std::cout << (*this)[i] << " ";
+        if (i == highlight)
+        {
+            std::cout << "\033[31m" << (*this)[i] << "\033[0m ";
+        }
+        else
+        {
+            std::cout << (*this)[i] << " ";
+        }
         if ((i + static_cast<uint8_t>(1)) % static_cast<uint8_t>(9) == static_cast<uint8_t>(0))
         {
             std::cout << '\n';
@@ -58,9 +80,10 @@ void sudoku::solve()
         fill_notations_by_sudoku();
         while (solving)
         {
-            solving = std::get< static_cast<uint8_t>(0)>(solve_by_naked_pairs());
-            solving |= solve_by_sudoku().first;
-            solving |= solve_by_single_candidate().first;
+            solve_by_naked_pairs();
+            solve_by_naked_triples();
+            solving = solve_by_sudoku();
+            solving |= solve_by_single_candidate();
         }
         print_board();
     }
@@ -72,30 +95,14 @@ bool sudoku::solve_step()
     {
         // write all basic notations
         fill_notations_by_sudoku();
-        // check for naked pairs
-        if (auto [first, cell1, cell2] = solve_by_naked_pairs(); first)
+        solve_by_naked_pairs();
+        solve_by_naked_triples();
+        if (solve_by_sudoku())
         {
-            std::cout << "Found a naked pair: " << cell1 << " " << cell2  << '\n';
-        }
-        // check for naked triples
-        if (auto [found, vect] = solve_by_naked_triples(); found)
-        {
-            std::cout << "Found a naked triple at " << vect[0] << " " << vect[1] << " " << vect[2] << '\n';
-        }
-        // check for sudoku
-        std::pair<bool, uint16_t> found_something = solve_by_sudoku();
-        if (found_something.first)
-        {
-            std::cout << "Solved by sudoku at cell: " << found_something.second + 1 << '\n';
-            print_board();
             return true;
         }
-        // check for single candidate
-        found_something = solve_by_single_candidate();
-        if (found_something.first)
+        if (solve_by_single_candidate())
         {
-            std::cout << "Solved by single candidate at cell: " << found_something.second + 1 << '\n';
-            print_board();
             return true;
         }
     }
@@ -155,7 +162,7 @@ bool sudoku::get_notation(const uint8_t cell, const uint8_t number) const
     return board[cell] >> (number + static_cast<uint8_t>(3)) & 1;
 }
 
-std::pair<bool, uint8_t> sudoku::solve_by_sudoku()
+bool sudoku::solve_by_sudoku()
 {
     // iterate through the board
     // if a cell is filled new solutions may have become available so we check again
@@ -164,35 +171,32 @@ std::pair<bool, uint8_t> sudoku::solve_by_sudoku()
         // an empty cell is found
         if ((*this)[i] == static_cast<uint8_t>(0))
         {
-            std::pair<bool, uint8_t> found_something = solve_by_column(i % static_cast<uint8_t>(9), i);
-            if (found_something.first)
+            bool found = solve_by_column(i % static_cast<uint8_t>(9), i);
+            if (found)
             {
-                update_notation(found_something.second);
-                return found_something;
+                return found;
             }
-            found_something = solve_by_row(i / static_cast<uint8_t>(9), i);
-            if (found_something.first)
+            found = solve_by_row(i / static_cast<uint8_t>(9), i);
+            if (found)
             {
-                update_notation(found_something.second);
-                return found_something;
+                return found;
             }
             // top left square is 0, 0, top middle square is 1, 0, top right square is 2, 0
             // middle left square is 0, 1, middle square is 1, 1, middle right square is 2, 1
             // bottom left square is 0, 2, bottom middle square is 1, 2, bottom right square is 2, 2
-            found_something = solve_by_square(
+            found = solve_by_square(
                 (i % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3), 
                 (i / static_cast<uint8_t>(9)) / static_cast<uint8_t>(3), i);
-            if (found_something.first)
+            if (found)
             {
-                update_notation(found_something.second);
-                return found_something;
+                return found;
             }
         }
     }
-    return {false, -1};
+    return false;
 }
 
-std::pair<bool, uint8_t> sudoku::solve_by_row(const uint8_t row, const uint8_t cell)
+bool sudoku::solve_by_row(const uint8_t row, const uint8_t cell)
 {
     std::vector<uint16_t> temp;
     const uint8_t index = row * static_cast<uint8_t>(9);
@@ -216,16 +220,16 @@ std::pair<bool, uint8_t> sudoku::solve_by_row(const uint8_t row, const uint8_t c
             {
                 if (std::find(temp.begin(), temp.end(), number) == temp.end())
                 {
-                    board[cell] = number;
-                    return {true, cell};
+                    write(cell, number, SUDOKU);
+                    return true;
                 }
             }
         }
     }
-    return {false, static_cast<uint8_t>(-1)};
+    return false;
 }
 
-std::pair<bool, uint8_t> sudoku::solve_by_column(const uint8_t col, const uint8_t cell)
+bool sudoku::solve_by_column(const uint8_t col, const uint8_t cell)
 {
     std::vector<uint16_t> temp;
     // iterate through column
@@ -248,16 +252,16 @@ std::pair<bool, uint8_t> sudoku::solve_by_column(const uint8_t col, const uint8_
             {
                 if (std::find(temp.begin(), temp.end(), number) == temp.end())
                 {
-                    board[cell] = number;
-                    return {true, cell};
+                    write(cell, number, SUDOKU);
+                    return true;
                 }
             }
         }
     }
-    return {false, -1};
+    return false;
 }
 
-std::pair<bool, uint8_t> sudoku::solve_by_square(const uint8_t col, const uint8_t row, const uint8_t cell)
+bool sudoku::solve_by_square(const uint8_t col, const uint8_t row, const uint8_t cell)
 {
     std::vector<uint16_t> temp;
     // iterate through rows
@@ -287,12 +291,12 @@ std::pair<bool, uint8_t> sudoku::solve_by_square(const uint8_t col, const uint8_
         {
             if (std::find(temp.begin(), temp.end() , number) == temp.end())
             {
-                board[cell] = number;
-                return {true, cell};
+                write(cell, number, SUDOKU);
+                return true;
             }
         }
     }
-    return {false, static_cast<uint8_t>(-1)};
+    return false;
 }
 
 
@@ -385,7 +389,7 @@ void sudoku::clear_notations()
     }
 }
 
-std::pair<bool, uint16_t> sudoku::solve_by_single_candidate()
+bool sudoku::solve_by_single_candidate()
 {
     // iterate through all numbers
     for (uint8_t number = 1; number <= static_cast<uint8_t>(9); number++)
@@ -409,9 +413,8 @@ std::pair<bool, uint16_t> sudoku::solve_by_single_candidate()
             }
             if (counter == static_cast<uint8_t>(1))
             {
-                board[cell] = number;
-                update_notation(cell);
-                return {true, cell};
+                write(cell, number, SINGLE);
+                return true;
             }
         }
         // check all rows
@@ -434,9 +437,8 @@ std::pair<bool, uint16_t> sudoku::solve_by_single_candidate()
             }
             if (counter == static_cast<uint8_t>(1))
             {
-                board[found] = number;
-                update_notation(found);
-                return {true, found};
+                write(found, number, SINGLE);
+                return true;
             }
         }
         // check all squares
@@ -477,17 +479,16 @@ std::pair<bool, uint16_t> sudoku::solve_by_single_candidate()
             }
             if (counter == static_cast<uint8_t>(1))
             {
-                board[found] = number;
-                update_notation(found);
-                return {true, found};
+                write(found, number, SINGLE);
+                return true;
             }
         }
     }
-    return {false, -1};
+    return false;
 }
 
 
-std::tuple<bool, uint16_t, uint16_t> sudoku::solve_by_naked_pairs()
+void sudoku::solve_by_naked_pairs()
 {
     // iterate through whole board
     for (uint8_t cell = 0; cell < static_cast<uint8_t>(81); cell++)
@@ -505,6 +506,8 @@ std::tuple<bool, uint16_t, uint16_t> sudoku::solve_by_naked_pairs()
         // if a cell is found with exactly 2 notations try to find another with the same exact 2 notations
         if (count == static_cast<uint8_t>(2))
         {
+            uint8_t found1 = 100;
+            uint8_t found2 = 100;
             const uint8_t row = cell / static_cast<uint8_t>(9);
             const uint8_t col = cell % static_cast<uint8_t>(9);
             const uint8_t s_row = (cell / static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
@@ -558,7 +561,10 @@ std::tuple<bool, uint16_t, uint16_t> sudoku::solve_by_naked_pairs()
                         write_notation(k, pair1.front(), 0);
                         write_notation(k, pair1.back(), 0);
                     }
-                    return {true, cell, i};
+                    found1 = i;
+                    std::cout << "Found a naked pair col: " << 
+                        static_cast<uint16_t>(cell) << " " << static_cast<uint16_t>(i)  << '\n';
+                    //return {true, cell, i};
                 }
             }
             // check current row
@@ -613,7 +619,10 @@ std::tuple<bool, uint16_t, uint16_t> sudoku::solve_by_naked_pairs()
                         write_notation(temp, pair1.front(), 0);
                         write_notation(temp, pair1.back(), 0);
                     }
-                    return {true, cell, index};
+                    found2 = index;
+                    std::cout << "Found a naked pair row: " << 
+                        static_cast<uint16_t>(cell) << " " << static_cast<uint16_t>(index)  << '\n';
+                    //return {true, cell, index};
                 }
             }
             // check current square
@@ -628,7 +637,7 @@ std::tuple<bool, uint16_t, uint16_t> sudoku::solve_by_naked_pairs()
                     const uint8_t index = (s_row * static_cast<uint8_t>(3) + i) *
                         static_cast<uint8_t>(9) + (s_col * static_cast<uint8_t>(3) + j);
                     // ignore the cell we already found
-                    if (cell == index)
+                    if (cell == index || index == found1 || index == found2)
                     {
                         continue;
                     }
@@ -659,16 +668,18 @@ std::tuple<bool, uint16_t, uint16_t> sudoku::solve_by_naked_pairs()
                                 write_notation(final_index, pair1.back(), 0);
                             }
                         }
-                        return {true, cell, index};
+                        std::cout << "Found a naked pair sq: " << 
+                            static_cast<uint16_t>(cell) << " " << static_cast<uint16_t>(index)  << '\n';
+                        //return {true, cell, index};
                     }
                 }
             }
         }
     }
-    return {false, -1, -1};
+    //return {false, -1, -1};
 }
 
-std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
+void sudoku::solve_by_naked_triples()
 {
     // iterate through whole board
     for (uint8_t cell = 0; cell < static_cast<uint8_t>(81); cell++)
@@ -755,8 +766,10 @@ std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
                                 write_notation(k, t, 0);
                             }
                         }
-                        return {true, std::vector{static_cast<uint16_t>(cell), 
-                            static_cast<uint16_t>(cell2), static_cast<uint16_t>(i)}};
+                        std::cout << "Found a naked triple at " << static_cast<uint16_t>(cell) << " " 
+                            << static_cast<uint16_t>(cell2) << " " << static_cast<uint16_t>(i) << '\n';
+                        //return {true, std::vector{static_cast<uint16_t>(cell), 
+                            //static_cast<uint16_t>(cell2), static_cast<uint16_t>(i)}};
                     }
                 }
             }
@@ -825,8 +838,10 @@ std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
                                 write_notation(temp, t, 0);
                             }
                         }
-                        return {true, std::vector{static_cast<uint16_t>(cell), 
-                            static_cast<uint16_t>(cell2), static_cast<uint16_t>(index)}};
+                        std::cout << "Found a naked triple at " << static_cast<uint16_t>(cell) << " " 
+                            << static_cast<uint16_t>(cell2) << " " << static_cast<uint16_t>(index) << '\n';
+                        //return {true, std::vector{static_cast<uint16_t>(cell), 
+                            //static_cast<uint16_t>(cell2), static_cast<uint16_t>(index)}};
                     }
                 }
             }
@@ -883,15 +898,17 @@ std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
                                     }
                                 }
                             }
-                            return {true, std::vector{static_cast<uint16_t>(cell), 
-                                static_cast<uint16_t>(cell2), static_cast<uint16_t>(index)}};
+                            std::cout << "Found a naked triple at " << static_cast<uint16_t>(cell) << " " 
+                                << static_cast<uint16_t>(cell2) << " " << static_cast<uint16_t>(index) << '\n';
+                            //return {true, std::vector{static_cast<uint16_t>(cell), 
+                                //static_cast<uint16_t>(cell2), static_cast<uint16_t>(index)}};
                         }
                     }
                 }
             }
         }
     }
-    return {false, std::vector<uint16_t>{}};
+    //return {false, std::vector<uint16_t>{}};
 }
 
 std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_quads()
