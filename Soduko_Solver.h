@@ -34,11 +34,13 @@
  *  The 2d vector is still used in the fill_notations_by_sudoku function
  *
  *  Since bitwise operations are pretty fast I am hoping it won't significantly increase the runtime
- *  of the program compared to the 2d vector idea and just letting me benefit fro the smaller memory usage
+ *  of the program compared to the 2d vector idea and just letting me benefit from the smaller memory usage
  *  
- *  Using 8 bit for everything that can be 8 bit not sure if speed optimal but I have a brainworm for it
+ *  Using 8 bit for everything that can be 8 bit probably not speed optimal but this is minimum ram usage challenge
+ *  I imposed on myself so :3
+ *  Might try to do a minimum run time version after
  *
- *  From what I understand everything gets converted to 64 bits in the alu so the only memory it saves would be in ram
+ *  From what I understand everything gets converted to 64 bits in the ALU so the only memory it saves would be in ram
  */
 #pragma once
 #include <string>
@@ -51,7 +53,7 @@
 
 class sudoku
 {
-    enum type
+    enum type : uint8_t
     {
         NONE,
         SUDOKU,
