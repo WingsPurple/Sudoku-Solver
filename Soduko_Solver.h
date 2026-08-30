@@ -47,7 +47,7 @@
 #include <fstream>
 #include <algorithm>
 
-#define MASK 0x000F
+#define MASK 0x0F
 
 class sudoku
 {

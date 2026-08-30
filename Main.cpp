@@ -19,7 +19,7 @@ uint8_t test(const std::string& board_file, const std::string& solution_file)
         std::cout << "Solution is correct " << std::endl;
         return 0;
     }
-    std::cout << "Solution is incorrect " << std::endl;
+    std::cout << "Solution is incorrect \n";
     solution.print_board();
     return -1;
 }
