@@ -10,8 +10,8 @@ uint8_t main()
 {
     //test1_sudoku();
     //test2_single_candidate();
-    //test3_naked_pairs();
-    test4_hidden_pairs();
+    test3_naked_pairs();
+    //test4_hidden_pairs();
     //test5_naked_triples();
     return 0;
 }
@@ -23,6 +23,7 @@ uint8_t test1_sudoku()
     {
         return -1;
     }
+    std::cout << "Starting Board " << "\n";
     board.print_board();
     while (board.solve_step())
     {
@@ -46,6 +47,7 @@ uint8_t test2_single_candidate()
     {
         return -1;
     }
+    std::cout << "Starting Board " << "\n";
     board.print_board();
     while (board.solve_step())
     {
@@ -69,6 +71,7 @@ uint8_t test3_naked_pairs()
     {
         return -1;
     }
+    std::cout << "Starting Board " << "\n";
     board.print_board();
     while (board.solve_step())
     {
@@ -92,6 +95,7 @@ uint8_t test4_hidden_pairs()
     {
         return -1;
     }
+    std::cout << "Starting Board " << "\n";
     board.print_board();
     while (board.solve_step())
     {
@@ -115,6 +119,7 @@ uint8_t test5_naked_triples()
     {
         return -1;
     }
+    std::cout << "Starting Board " << "\n";
     board.print_board();
     while (board.solve_step())
     {

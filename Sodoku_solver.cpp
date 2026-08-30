@@ -584,7 +584,7 @@ std::tuple<bool, uint16_t, uint16_t> sudoku::solve_by_naked_pairs()
                 if (count == static_cast<uint8_t>(2) && pair1 == pair2)
                 {
                     // if the pair is within the same square
-                    if (s_row == (index % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3))
+                    if (s_row == (index / static_cast<uint8_t>(9)) / static_cast<uint8_t>(3))
                     {
                         // iterate through rows
                         for (uint8_t k = 0; k < static_cast<uint8_t>(3); k++)
@@ -695,7 +695,8 @@ std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
             // check current column
             for (uint8_t i = col; i < static_cast<uint8_t>(81); i += static_cast<uint8_t>(9))
             {
-                if (i == cell)
+                // ignore the cells we already found
+                if (i == cell || i == cell2)
                 {
                     continue;
                 }
@@ -720,6 +721,29 @@ std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
                     // if a third is found remove the notations for the 3 numbers from the rest of the column
                     if (cell2 != static_cast<uint8_t>(100) && cell2 != i)
                     {
+                        // if the triple is within the same square
+                        if (s_col == (cell2 % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3) &&
+                            s_col == (i % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3))
+                        {
+                            // iterate through rows
+                            for (uint8_t k = 0; k < static_cast<uint8_t>(3); k++)
+                            {
+                                // iterate within row
+                                for (uint8_t l = 0; l < static_cast<uint8_t>(3); l++)
+                                {
+                                    const uint8_t final_index = (s_row * static_cast<uint8_t>(3) + k) * 
+                                        static_cast<uint8_t>(9) + (s_col * static_cast<uint8_t>(3) + l);
+                                    if (final_index == cell || final_index == i)
+                                    {
+                                        continue;
+                                    }
+                                    for (const auto t : triple1)
+                                    {
+                                        write_notation(final_index, t, 0);
+                                    }
+                                }
+                            }
+                        }
                         for (uint8_t k = col; k < static_cast<uint8_t>(81); k += static_cast<uint8_t>(9))
                         {
                             if (k == cell || k == i || k == cell2)
@@ -742,8 +766,8 @@ std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
                 count = static_cast<uint8_t>(0);
                 std::vector<uint8_t> triple2{};
                 const uint8_t index = row * static_cast<uint8_t>(9) + i;
-                // ignore the cell we already found
-                if (index == cell)
+                // ignore the cells we already found
+                if (index == cell || index == cell2)
                 {
                     continue;
                 }
@@ -766,6 +790,29 @@ std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
                     // if a third is found remove the notations for the 3 numbers from the rest of the row
                     if (cell2 != static_cast<uint8_t>(100) && cell2 != index)
                     {
+                        // if the triple is within the same square
+                        if (s_row == (cell2 / static_cast<uint8_t>(9)) / static_cast<uint8_t>(3) &&
+                            s_row == (index / static_cast<uint8_t>(9)) / static_cast<uint8_t>(3))
+                        {
+                            // iterate through rows
+                            for (uint8_t k = 0; k < static_cast<uint8_t>(3); k++)
+                            {
+                                // iterate within row
+                                for (uint8_t l = 0; l < static_cast<uint8_t>(3); l++)
+                                {
+                                    const uint8_t final_index = (s_row * static_cast<uint8_t>(3) + k) * 
+                                        static_cast<uint8_t>(9) + (s_col * static_cast<uint8_t>(3) + l);
+                                    if (final_index == cell || final_index == index)
+                                    {
+                                        continue;
+                                    }
+                                    for (const auto t : triple1)
+                                    {
+                                        write_notation(final_index, t, 0);
+                                    }
+                                }
+                            }
+                        }
                         for (uint8_t k = 0; k < static_cast<uint8_t>(9); k++)
                         {
                             const uint8_t temp = row * static_cast<uint8_t>(9) + k;
@@ -794,8 +841,8 @@ std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_triples()
                     // index is the cell in the square we are checking
                     const uint8_t index = (s_row * static_cast<uint8_t>(3) + i) *
                         static_cast<uint8_t>(9) + (s_col * static_cast<uint8_t>(3) + j);
-                    // ignore the cell we already found
-                    if (cell == index)
+                    // ignore the cells we already found
+                    if (cell == index || cell2 == index)
                     {
                         continue;
                     }
