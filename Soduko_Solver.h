@@ -169,14 +169,14 @@ public:
         return board[index] & MASK;
     }
     
+    // const version
+    uint16_t operator[](const size_t index) const {
+        return board[index] & MASK;
+    }
+    
     // overload comparison operator so we can compare boards
     bool operator==(const sudoku& rhs) const
     {
         return board == rhs.board;
-    }
-    
-    // const version
-    uint16_t operator[](const size_t index) const {
-        return board[index] & MASK;
     }
 };
