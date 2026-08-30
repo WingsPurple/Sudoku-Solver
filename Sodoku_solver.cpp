@@ -85,6 +85,14 @@ void sudoku::solve()
             solve_by_naked_triples();
             solving = solve_by_sudoku();
             solving |= solve_by_single_candidate();
+            // if nothing is found check if a second loop of pairs/triples finds anything
+            if (solving == false)
+            {
+                solve_by_naked_pairs();
+                solve_by_naked_triples();
+                solving = solve_by_sudoku();
+                solving |= solve_by_single_candidate();
+            }
         }
     }
 }
