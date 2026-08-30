@@ -14,7 +14,7 @@ uint8_t test(const std::string& board_file, const std::string& solution_file)
     }
     sudoku solution;
     solution.read(solution_file);
-    if (solution.board == board.board)
+    if (solution == board)
     {
         std::cout << "Solution is correct " << std::endl;
         return 0;

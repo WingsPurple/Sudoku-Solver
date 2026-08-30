@@ -47,6 +47,7 @@ void sudoku::print_board(const uint8_t highlight, const type t) const
     }
     for (uint8_t i = 0; i < static_cast<uint8_t>(81); i++)
     {
+        // highlight the recently written number as red
         if (i == highlight)
         {
             std::cout << "\033[31m" << (*this)[i] << "\033[0m ";
@@ -564,7 +565,6 @@ void sudoku::solve_by_naked_pairs()
                     found1 = i;
                     std::cout << "Found a naked pair col: " << 
                         static_cast<uint16_t>(cell) << " " << static_cast<uint16_t>(i)  << '\n';
-                    //return {true, cell, i};
                 }
             }
             // check current row
@@ -622,7 +622,6 @@ void sudoku::solve_by_naked_pairs()
                     found2 = index;
                     std::cout << "Found a naked pair row: " << 
                         static_cast<uint16_t>(cell) << " " << static_cast<uint16_t>(index)  << '\n';
-                    //return {true, cell, index};
                 }
             }
             // check current square
@@ -670,13 +669,11 @@ void sudoku::solve_by_naked_pairs()
                         }
                         std::cout << "Found a naked pair sq: " << 
                             static_cast<uint16_t>(cell) << " " << static_cast<uint16_t>(index)  << '\n';
-                        //return {true, cell, index};
                     }
                 }
             }
         }
     }
-    //return {false, -1, -1};
 }
 
 void sudoku::solve_by_naked_triples()
@@ -768,8 +765,6 @@ void sudoku::solve_by_naked_triples()
                         }
                         std::cout << "Found a naked triple at " << static_cast<uint16_t>(cell) << " " 
                             << static_cast<uint16_t>(cell2) << " " << static_cast<uint16_t>(i) << '\n';
-                        //return {true, std::vector{static_cast<uint16_t>(cell), 
-                            //static_cast<uint16_t>(cell2), static_cast<uint16_t>(i)}};
                     }
                 }
             }
@@ -840,8 +835,6 @@ void sudoku::solve_by_naked_triples()
                         }
                         std::cout << "Found a naked triple at " << static_cast<uint16_t>(cell) << " " 
                             << static_cast<uint16_t>(cell2) << " " << static_cast<uint16_t>(index) << '\n';
-                        //return {true, std::vector{static_cast<uint16_t>(cell), 
-                            //static_cast<uint16_t>(cell2), static_cast<uint16_t>(index)}};
                     }
                 }
             }
@@ -900,15 +893,12 @@ void sudoku::solve_by_naked_triples()
                             }
                             std::cout << "Found a naked triple at " << static_cast<uint16_t>(cell) << " " 
                                 << static_cast<uint16_t>(cell2) << " " << static_cast<uint16_t>(index) << '\n';
-                            //return {true, std::vector{static_cast<uint16_t>(cell), 
-                                //static_cast<uint16_t>(cell2), static_cast<uint16_t>(index)}};
                         }
                     }
                 }
             }
         }
     }
-    //return {false, std::vector<uint16_t>{}};
 }
 
 std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_quads()

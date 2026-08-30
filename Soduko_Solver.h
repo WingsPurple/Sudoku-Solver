@@ -59,45 +59,13 @@ class sudoku
         SUDOKU,
         SINGLE
     };
-public:
-    // initialize empty board
-    sudoku()
-    {
-        board.resize(0, 0);
-    }
-
     // the first 4 bits of the uint16_t represent the number in the cell
     // the next 9 represent the notations for numbers 1-9
     // if it is a possible candidate that bit is set to 1 otherwise it is set to 0
     std::vector<uint16_t> board;
-
-    // return only the 4 bits that represent the number
-    // not really happy having to use (*this)[] when reading and board[] when writing
-    // not sure how to make it so that I can just use one or the other
-    // it ddoes make it so writing automatically removes the notations which is nice
-    uint16_t operator[](const size_t index) {
-        return board[index] & MASK;
-    }
-    
-    // const version
-    uint16_t operator[](const size_t index) const {
-        return board[index] & MASK;
-    }
-
-    // read in the board from a file
-    bool read(const std::string& filename);
     
     // write to a cell
     void write(uint8_t cell, uint16_t number, type t);
-
-    // keep going until the board is solved
-    void solve();
-
-    // solve one step
-    bool solve_step();
-
-    // prints the current board
-    void print_board(uint8_t highlight = 100, type t = NONE) const;
 
     // write a notation for a cell
     void write_notation(const uint8_t cell, const uint8_t number, const uint8_t state);
@@ -114,9 +82,6 @@ public:
 
     // removes all notations from empty cells
     void clear_notations();
-
-    // determines if the current board is solvable
-    bool is_solvable() const;
 
     // checks for single candidate in column, row, and square ( does not use notations )
     bool solve_by_sudoku();
@@ -167,4 +132,51 @@ public:
     bool solve_by_y_wing();
 
     bool solve_by_swordfish();
+public:
+    // initialize empty board
+    sudoku()
+    {
+        board.resize(0, 0);
+    }
+    
+    // initialize from file
+    sudoku(const std::string& filename)
+    {
+        board.resize(0, 0);
+        read(filename);
+    }
+    
+    // read in the board from a file
+    bool read(const std::string& filename);
+    
+    // prints the current board
+    void print_board(uint8_t highlight = 100, type t = NONE) const;
+    
+    // determines if the current board is solvable
+    bool is_solvable() const;
+    
+    // keep going until the board is solved
+    void solve();
+
+    // solve one step
+    bool solve_step();
+
+    // return only the 4 bits that represent the number
+    // not really happy having to use (*this)[] when reading and board[] when writing
+    // not sure how to make it so that I can just use one or the other
+    // it does make it so writing automatically removes the notations which is nice
+    uint16_t operator[](const size_t index) {
+        return board[index] & MASK;
+    }
+    
+    // overload comparison operator so we can compare boards
+    bool operator==(const sudoku& rhs) const
+    {
+        return board == rhs.board;
+    }
+    
+    // const version
+    uint16_t operator[](const size_t index) const {
+        return board[index] & MASK;
+    }
 };
