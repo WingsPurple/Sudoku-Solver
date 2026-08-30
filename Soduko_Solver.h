@@ -140,7 +140,7 @@ public:
     }
     
     // initialize from file
-    sudoku(const std::string& filename)
+    explicit sudoku(const std::string& filename)
     {
         board.resize(0, 0);
         read(filename);

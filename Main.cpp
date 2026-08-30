@@ -8,6 +8,7 @@ uint8_t test(const std::string& board_file, const std::string& solution_file)
     }
     std::cout << "Starting Board " << "\n";
     board.print_board();
+    //board.solve();
     while (board.solve_step())
     {
         board.solve_step();
@@ -28,7 +29,7 @@ uint8_t main()
 {
     //test("Sudoku boards/Board_1_sudoku.txt", "Sudoku boards/Board_1_and_2_solution.txt");
     //test("Sudoku boards/Board_2_single_candidate.txt", "Sudoku boards/Board_1_and_2_solution.txt");
-    test("Sudoku boards/Board_3_naked_pairs.txt", "Sudoku boards/Board_3_solution.txt");
+    //test("Sudoku boards/Board_3_naked_pairs.txt", "Sudoku boards/Board_3_solution.txt");
     //test("Sudoku boards/Board_4_hidden_pairs.txt", "Sudoku boards/Board_4_solution.txt");
     //test("Sudoku boards/Board_5_naked_triples.txt", "Sudoku boards/Board_5_solution.txt");
     return 0;

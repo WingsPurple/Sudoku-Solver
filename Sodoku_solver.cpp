@@ -86,7 +86,6 @@ void sudoku::solve()
             solving = solve_by_sudoku();
             solving |= solve_by_single_candidate();
         }
-        print_board();
     }
 }
 
@@ -94,7 +93,6 @@ bool sudoku::solve_step()
 {
     if (is_solvable())
     {
-        // write all basic notations
         fill_notations_by_sudoku();
         solve_by_naked_pairs();
         solve_by_naked_triples();
@@ -338,9 +336,9 @@ void sudoku::fill_notations_by_sudoku()
     // iterate through all squares
     for (uint8_t cell = 0; cell < static_cast<uint8_t>(81); cell++)
     {
-        // calculate the current row and column
-        const uint16_t col = (cell % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
-        const uint16_t row = (cell / static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
+        // calculate the current row and column of the square
+        const uint16_t s_col = (cell % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
+        const uint16_t s_row = (cell / static_cast<uint8_t>(9)) / static_cast<uint8_t>(3);
         // iterate through rows of the square
         for (uint8_t i = 0; i < static_cast<uint8_t>(3); i++)
         {
@@ -348,8 +346,8 @@ void sudoku::fill_notations_by_sudoku()
             for (uint8_t j = 0; j < static_cast<uint8_t>(3); j++)
             {
                 // index is the cell in the square we are checking
-                const uint16_t index = (row * static_cast<uint8_t>(3) + i) * static_cast<uint8_t>(9) + 
-                    (col * static_cast<uint8_t>(3) + j);
+                const uint16_t index = (s_row * static_cast<uint8_t>(3) + i) * static_cast<uint8_t>(9) + 
+                    (s_col * static_cast<uint8_t>(3) + j);
                 // if we encounter a number in the square remove it from the list of possible numbers
                 if ((*this)[index] != static_cast<uint8_t>(0))
                 {
@@ -359,8 +357,8 @@ void sudoku::fill_notations_by_sudoku()
                         // iterate within row
                         for (uint8_t l = 0; l < static_cast<uint8_t>(3); l++)
                         {
-                            const uint16_t write_index = (row * static_cast<uint8_t>(3) + k) * 
-                                static_cast<uint8_t>(9) + (col * static_cast<uint8_t>(3) + l);
+                            const uint16_t write_index = (s_row * static_cast<uint8_t>(3) + k) * 
+                                static_cast<uint8_t>(9) + (s_col * static_cast<uint8_t>(3) + l);
                             possibilities[write_index][(*this)[index] - 1] = static_cast<uint8_t>(0);
                         }
                     }
@@ -372,7 +370,6 @@ void sudoku::fill_notations_by_sudoku()
         {
             if (possibilities[cell][i] != static_cast<uint8_t>(0) && (*this)[cell] == static_cast<uint8_t>(0))
             {
-                // finally write the notations for the cell
                 write_notation(cell, i + 1, possibilities[cell][i]);
             }
         }
