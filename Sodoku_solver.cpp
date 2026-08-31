@@ -523,6 +523,7 @@ void sudoku::solve_by_naked_pairs()
         // if a cell is found with exactly 2 notations try to find another with the same exact 2 notations
         if (count == static_cast<uint8_t>(2))
         {
+            bool found = false;
             // using 100 as the out of bounds/unset value since I can't do -1
             uint8_t found1 = 100;
             uint8_t found2 = 100;
@@ -566,46 +567,51 @@ void sudoku::solve_by_naked_pairs()
                         write_notation(k, pair1.back(), 0);
                     }
                     found1 = i;
+                    found = true;
                     std::cout << "Found a naked pair col: " << 
                         static_cast<uint16_t>(cell) << " " << static_cast<uint16_t>(i)  << '\n';
                 }
             }
-            // check current row
-            for (uint8_t i = 0; i < static_cast<uint8_t>(9); i++)
+            // we can skip the row check if the pair is found in a column
+            if (found == false)
             {
-                // make a list of all notations in the current cell
-                count = static_cast<uint8_t>(0);
-                std::vector<uint8_t> pair2{};
-                const uint8_t index = row * static_cast<uint8_t>(9) + i;
-                // ignore the cell we already found
-                if (index == cell)
+                // check current row
+                for (uint8_t i = 0; i < static_cast<uint8_t>(9); i++)
                 {
-                    continue;
-                }
-                for (uint8_t j = 1; j <= static_cast<uint8_t>(9); j++)
-                {
-                    if (get_notation(index, j) == true)
+                    // make a list of all notations in the current cell
+                    count = static_cast<uint8_t>(0);
+                    std::vector<uint8_t> pair2{};
+                    const uint8_t index = row * static_cast<uint8_t>(9) + i;
+                    // ignore the cell we already found
+                    if (index == cell)
                     {
-                        count += 1;
-                        pair2.push_back(j);
+                        continue;
                     }
-                }
-                // if an identical pair is found remove the found notations from the rest of the row
-                if (count == static_cast<uint8_t>(2) && pair1 == pair2)
-                {
-                    for (uint8_t k = 0; k < static_cast<uint8_t>(9); k++)
+                    for (uint8_t j = 1; j <= static_cast<uint8_t>(9); j++)
                     {
-                        const uint8_t temp = row * static_cast<uint8_t>(9) + k;
-                        if (temp == cell || temp == index)
+                        if (get_notation(index, j) == true)
                         {
-                            continue;
+                            count += 1;
+                            pair2.push_back(j);
                         }
-                        write_notation(temp, pair1.front(), 0);
-                        write_notation(temp, pair1.back(), 0);
                     }
-                    found2 = index;
-                    std::cout << "Found a naked pair row: " << 
-                        static_cast<uint16_t>(cell) << " " << static_cast<uint16_t>(index)  << '\n';
+                    // if an identical pair is found remove the found notations from the rest of the row
+                    if (count == static_cast<uint8_t>(2) && pair1 == pair2)
+                    {
+                        for (uint8_t k = 0; k < static_cast<uint8_t>(9); k++)
+                        {
+                            const uint8_t temp = row * static_cast<uint8_t>(9) + k;
+                            if (temp == cell || temp == index)
+                            {
+                                continue;
+                            }
+                            write_notation(temp, pair1.front(), 0);
+                            write_notation(temp, pair1.back(), 0);
+                        }
+                        found2 = index;
+                        std::cout << "Found a naked pair row: " << 
+                            static_cast<uint16_t>(cell) << " " << static_cast<uint16_t>(index)  << '\n';
+                    }
                 }
             }
             // check current square
@@ -682,6 +688,7 @@ void sudoku::solve_by_naked_triples()
         // if a cell is found with exactly 3 notations try to find 2 more with at least 2 of the same 3 notations
         if (count == static_cast<uint8_t>(3))
         {
+            bool found = false;
             // using 100 as the out of bounds/unset value since I can't do -1
             uint8_t cell2 = 100;
             const uint8_t row = cell / static_cast<uint8_t>(9);
@@ -738,51 +745,55 @@ void sudoku::solve_by_naked_triples()
                     }
                 }
             }
-            // check current row
-            for (uint8_t i = 0; i < static_cast<uint8_t>(9); i++)
+            // we can skip the row check if the pair is found in a column
+            if (found == false)
             {
-                // make a list of all notations in the current cell
-                count = static_cast<uint8_t>(0);
-                std::vector<uint8_t> triple2{};
-                const uint8_t index = row * static_cast<uint8_t>(9) + i;
-                // ignore the cells we already found
-                if (index == cell || index == cell2)
+                // check current row
+                for (uint8_t i = 0; i < static_cast<uint8_t>(9); i++)
                 {
-                    continue;
-                }
-                for (uint8_t j = 1; j <= static_cast<uint8_t>(9); j++)
-                {
-                    if (get_notation(index, j) == true)
+                    // make a list of all notations in the current cell
+                    count = static_cast<uint8_t>(0);
+                    std::vector<uint8_t> triple2{};
+                    const uint8_t index = row * static_cast<uint8_t>(9) + i;
+                    // ignore the cells we already found
+                    if (index == cell || index == cell2)
                     {
-                        count++;
-                        triple2.push_back(j);
+                        continue;
                     }
-                }
-                if (count > static_cast<uint8_t>(1) && count < static_cast<uint8_t>(4)
-                    && tiple_or_quad(triple1, triple2) == true)
-                {
-                    // if a cell with 2/3 or 3/3 notations is found remember it
-                    if (cell2 == static_cast<uint8_t>(100))
+                    for (uint8_t j = 1; j <= static_cast<uint8_t>(9); j++)
                     {
-                        cell2 = index;
-                    }
-                    // if a third is found remove the notations for the 3 numbers from the rest of the row
-                    if (cell2 != static_cast<uint8_t>(100) && cell2 != index)
-                    {
-                        for (uint8_t k = 0; k < static_cast<uint8_t>(9); k++)
+                        if (get_notation(index, j) == true)
                         {
-                            const uint8_t temp = row * static_cast<uint8_t>(9) + k;
-                            if (temp == cell || temp == index || temp == cell2)
-                            {
-                                continue;
-                            }
-                            for (const auto t : triple1)
-                            {
-                                write_notation(temp, t, 0);
-                            }
+                            count++;
+                            triple2.push_back(j);
                         }
-                        std::cout << "Found a naked triple at " << static_cast<uint16_t>(cell) << " " 
-                            << static_cast<uint16_t>(cell2) << " " << static_cast<uint16_t>(index) << '\n';
+                    }
+                    if (count > static_cast<uint8_t>(1) && count < static_cast<uint8_t>(4)
+                        && tiple_or_quad(triple1, triple2) == true)
+                    {
+                        // if a cell with 2/3 or 3/3 notations is found remember it
+                        if (cell2 == static_cast<uint8_t>(100))
+                        {
+                            cell2 = index;
+                        }
+                        // if a third is found remove the notations for the 3 numbers from the rest of the row
+                        if (cell2 != static_cast<uint8_t>(100) && cell2 != index)
+                        {
+                            for (uint8_t k = 0; k < static_cast<uint8_t>(9); k++)
+                            {
+                                const uint8_t temp = row * static_cast<uint8_t>(9) + k;
+                                if (temp == cell || temp == index || temp == cell2)
+                                {
+                                    continue;
+                                }
+                                for (const auto t : triple1)
+                                {
+                                    write_notation(temp, t, 0);
+                                }
+                            }
+                            std::cout << "Found a naked triple at " << static_cast<uint16_t>(cell) << " " 
+                                << static_cast<uint16_t>(cell2) << " " << static_cast<uint16_t>(index) << '\n';
+                        }
                     }
                 }
             }
