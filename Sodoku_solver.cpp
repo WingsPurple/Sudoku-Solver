@@ -556,26 +556,6 @@ void sudoku::solve_by_naked_pairs()
                 // if an identical pair is found remove the found notations from the rest of the column
                 if (count == static_cast<uint8_t>(2) && pair1 == pair2)
                 {
-                    // if the pair is within the same square
-                    if (s_col == (i % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3))
-                    {
-                        // iterate through rows
-                        for (uint8_t k = 0; k < static_cast<uint8_t>(3); k++)
-                        {
-                            // iterate within row
-                            for (uint8_t l = 0; l < static_cast<uint8_t>(3); l++)
-                            {
-                                const uint8_t final_index = (s_row * static_cast<uint8_t>(3) + k) * 
-                                    static_cast<uint8_t>(9) + (s_col * static_cast<uint8_t>(3) + l);
-                                if (final_index == cell || final_index == i)
-                                {
-                                    continue;
-                                }
-                                write_notation(final_index, pair1.front(), 0);
-                                write_notation(final_index, pair1.back(), 0);
-                            }
-                        }
-                    }
                     for (uint8_t k = col; k < static_cast<uint8_t>(81); k += static_cast<uint8_t>(9))
                     {
                         if (k == cell || k == i)
@@ -613,26 +593,6 @@ void sudoku::solve_by_naked_pairs()
                 // if an identical pair is found remove the found notations from the rest of the row
                 if (count == static_cast<uint8_t>(2) && pair1 == pair2)
                 {
-                    // if the pair is within the same square
-                    if (s_row == (index / static_cast<uint8_t>(9)) / static_cast<uint8_t>(3))
-                    {
-                        // iterate through rows
-                        for (uint8_t k = 0; k < static_cast<uint8_t>(3); k++)
-                        {
-                            // iterate within row
-                            for (uint8_t l = 0; l < static_cast<uint8_t>(3); l++)
-                            {
-                                const uint8_t final_index = (s_row * static_cast<uint8_t>(3) + k) * 
-                                    static_cast<uint8_t>(9) + (s_col * static_cast<uint8_t>(3) + l);
-                                if (final_index == cell || final_index == index)
-                                {
-                                    continue;
-                                }
-                                write_notation(final_index, pair1.front(), 0);
-                                write_notation(final_index, pair1.back(), 0);
-                            }
-                        }
-                    }
                     for (uint8_t k = 0; k < static_cast<uint8_t>(9); k++)
                     {
                         const uint8_t temp = row * static_cast<uint8_t>(9) + k;
@@ -762,29 +722,6 @@ void sudoku::solve_by_naked_triples()
                     // if a third is found remove the notations for the 3 numbers from the rest of the column
                     if (cell2 != static_cast<uint8_t>(100) && cell2 != i)
                     {
-                        // if the triple is within the same square
-                        if (s_col == (cell2 % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3) &&
-                            s_col == (i % static_cast<uint8_t>(9)) / static_cast<uint8_t>(3))
-                        {
-                            // iterate through rows
-                            for (uint8_t k = 0; k < static_cast<uint8_t>(3); k++)
-                            {
-                                // iterate within row
-                                for (uint8_t l = 0; l < static_cast<uint8_t>(3); l++)
-                                {
-                                    const uint8_t final_index = (s_row * static_cast<uint8_t>(3) + k) * 
-                                        static_cast<uint8_t>(9) + (s_col * static_cast<uint8_t>(3) + l);
-                                    if (final_index == cell || final_index == i)
-                                    {
-                                        continue;
-                                    }
-                                    for (const auto t : triple1)
-                                    {
-                                        write_notation(final_index, t, 0);
-                                    }
-                                }
-                            }
-                        }
                         for (uint8_t k = col; k < static_cast<uint8_t>(81); k += static_cast<uint8_t>(9))
                         {
                             if (k == cell || k == i || k == cell2)
@@ -832,29 +769,6 @@ void sudoku::solve_by_naked_triples()
                     // if a third is found remove the notations for the 3 numbers from the rest of the row
                     if (cell2 != static_cast<uint8_t>(100) && cell2 != index)
                     {
-                        // if the triple is within the same square
-                        if (s_row == (cell2 / static_cast<uint8_t>(9)) / static_cast<uint8_t>(3) &&
-                            s_row == (index / static_cast<uint8_t>(9)) / static_cast<uint8_t>(3))
-                        {
-                            // iterate through rows
-                            for (uint8_t k = 0; k < static_cast<uint8_t>(3); k++)
-                            {
-                                // iterate within row
-                                for (uint8_t l = 0; l < static_cast<uint8_t>(3); l++)
-                                {
-                                    const uint8_t final_index = (s_row * static_cast<uint8_t>(3) + k) * 
-                                        static_cast<uint8_t>(9) + (s_col * static_cast<uint8_t>(3) + l);
-                                    if (final_index == cell || final_index == index)
-                                    {
-                                        continue;
-                                    }
-                                    for (const auto t : triple1)
-                                    {
-                                        write_notation(final_index, t, 0);
-                                    }
-                                }
-                            }
-                        }
                         for (uint8_t k = 0; k < static_cast<uint8_t>(9); k++)
                         {
                             const uint8_t temp = row * static_cast<uint8_t>(9) + k;
