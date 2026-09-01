@@ -82,14 +82,14 @@ void sudoku::solve()
         while (solving)
         {
             solve_by_naked_pairs();
-            solve_by_naked_triples();
+            //solve_by_naked_triples();
             solving = solve_by_sudoku();
             solving |= solve_by_single_candidate();
             // if nothing is found check if a second loop of pairs/triples finds anything
             if (solving == false)
             {
                 solve_by_naked_pairs();
-                solve_by_naked_triples();
+                //solve_by_naked_triples();
                 solving = solve_by_sudoku();
                 solving |= solve_by_single_candidate();
             }
@@ -125,13 +125,13 @@ bool sudoku::is_solvable() const
 
 void sudoku::write_notation(const uint8_t cell, const uint8_t number, const uint8_t state)
 {
-    if (state == static_cast<uint8_t>(0) || state == static_cast<uint8_t>(1))
+    if (state == static_cast<uint8_t>(0))
     {
-        // clear the bit and then set it to the state value
-        // since the number will always be 1-9 
-        // we only have to add static_cast<uint8_t>(3) to the bit position to shift it correctly
-        board[cell] = static_cast<uint16_t>(board[cell] & ~(static_cast<uint8_t>(1) << 
-            (number + static_cast<uint8_t>(3)))) | static_cast<uint16_t>(state << (number + static_cast<uint8_t>(3)));
+        board[cell] &= (static_cast<uint16_t>(~(static_cast<uint8_t>(1) << (static_cast<uint8_t>(3) + number))));
+    }
+    else if (state == static_cast<uint8_t>(1))
+    {
+        board[cell] |= (static_cast<uint16_t>(static_cast<uint8_t>(1) << (static_cast<uint8_t>(3) + number)));
     }
 }
 

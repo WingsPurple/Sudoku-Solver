@@ -48,6 +48,7 @@
 #include <vector>
 #include <fstream>
 #include <algorithm>
+#include <cstdint>
 
 #define MASK 0x0F
 
