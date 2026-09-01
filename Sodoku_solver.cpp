@@ -502,8 +502,6 @@ bool sudoku::solve_by_single_candidate()
     return false;
 }
 
-// solve_by_naked_pairs, solve_by_naked_triples are stumping me with what's wrong
-// I am considering turning them into separate functions for col row square 
 void sudoku::solve_by_naked_pairs()
 {
     // iterate through whole board
@@ -729,6 +727,7 @@ void sudoku::solve_by_naked_triples()
                     // if a third is found remove the notations for the 3 numbers from the rest of the column
                     if (cell2 != static_cast<uint8_t>(100) && cell2 != i)
                     {
+                        found = true;
                         for (uint8_t k = col; k < static_cast<uint8_t>(81); k += static_cast<uint8_t>(9))
                         {
                             if (k == cell || k == i || k == cell2)
