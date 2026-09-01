@@ -156,10 +156,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Sodoku_solver.cpp" />
+    <ClCompile Include="sudoku_solver.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Soduko_Solver.h" />
+    <Content Include="CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="sudoku_solver.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,4 +1,4 @@
-﻿#include "Soduko_Solver.h"
+﻿#include "sudoku_solver.h"
 uint8_t test(const std::string& board_file, const std::string& solution_file)
 {
     sudoku board;
@@ -21,7 +21,7 @@ uint8_t test(const std::string& board_file, const std::string& solution_file)
     return -1;
 }
 
-uint8_t main()
+int main()
 {
     //test("Sudoku boards/Board_1_sudoku.txt", "Sudoku boards/Board_1_and_2_solution.txt");
     //test("Sudoku boards/Board_2_single_candidate.txt", "Sudoku boards/Board_1_and_2_solution.txt");

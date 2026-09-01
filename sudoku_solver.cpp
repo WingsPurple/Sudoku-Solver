@@ -1,4 +1,4 @@
-#include "Soduko_Solver.h"
+#include "sudoku_solver.h"
 
 bool sudoku::read(const std::string& filename)
 {
