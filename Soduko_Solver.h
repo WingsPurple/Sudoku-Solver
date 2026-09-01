@@ -51,8 +51,8 @@
 #include <cstdint>
 
 #define MASK 0x0F
-#define u8sc static_cast<uint8_t>
-#define u16sc static_cast<uint16_t>
+#define U8_SC static_cast<uint8_t>
+#define U16_SC static_cast<uint16_t>
 
 class sudoku
 {
