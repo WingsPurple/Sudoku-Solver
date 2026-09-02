@@ -155,6 +155,8 @@ public:
     // prints the current board
     void print_board(uint8_t highlight = 100, type t = NONE) const;
     
+    void diff(const sudoku& rhs) const;
+    
     // determines if the current board is solvable
     bool is_solvable() const;
     
@@ -181,5 +183,11 @@ public:
     bool operator==(const sudoku& rhs) const
     {
         return board == rhs.board;
+    }
+    
+    // overload comparison operator so we can compare boards
+    bool operator!=(const sudoku& rhs) const
+    {
+        return board != rhs.board;
     }
 };

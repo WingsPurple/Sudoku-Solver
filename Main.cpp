@@ -11,13 +11,13 @@ uint8_t test(const std::string& board_file, const std::string& solution_file)
     board.solve();
     sudoku solution;
     solution.read(solution_file);
-    if (solution == board)
+    if (solution != board)
     {
-        std::cout << "Solution is correct " << std::endl;
+        std::cout << "Solution is incorrect \n";
+        board.diff(solution);
         return 0;
     }
-    std::cout << "Solution is incorrect \n";
-    solution.print_board();
+    std::cout << "Solution is correct " << std::endl;
     return -1;
 }
 

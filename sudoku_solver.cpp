@@ -73,6 +73,37 @@ void sudoku::print_board(const uint8_t highlight, const type t) const
     std::cout << std::endl;
 }
 
+void sudoku::diff(const sudoku& rhs) const
+{
+    for (uint8_t i = 0; i < U8_SC(81); i++)
+    {
+        // highlight the recently written number as red
+        if ((*this)[i] != rhs.board[i])
+        {
+            std::cout << "\033[31m" << (*this)[i] << "\033[0m ";
+        }
+        else
+        {
+            std::cout << (*this)[i] << " ";
+        }
+        if ((i + U8_SC(1)) % U8_SC(9) == U8_SC(0))
+        {
+            std::cout << '\n';
+            if ((i + U8_SC(1)) % U8_SC(27) == 
+                U8_SC(0) && i != U8_SC(80))
+            {
+                std::cout << "----------------------" << '\n';
+            }
+        }
+        else if (i % U8_SC(3) == U8_SC(2))
+        {
+            std::cout << "| ";
+        }
+    }
+    std::cout << '\n';
+    rhs.print_board();
+}
+
 void sudoku::solve()
 {
     if (is_solvable())
@@ -83,7 +114,7 @@ void sudoku::solve()
         {
             solve_by_naked_pairs();
             //solve_by_naked_triples();
-            solve_by_hidden_pairs();
+            //solve_by_hidden_pairs();
             solving = solve_by_sudoku();
             solving |= solve_by_single_candidate();
             // if nothing is found check if a second loop of pairs/triples finds anything
@@ -91,7 +122,7 @@ void sudoku::solve()
             {
                 solve_by_naked_pairs();
                 //solve_by_naked_triples();
-                solve_by_hidden_pairs();
+                //solve_by_hidden_pairs();
                 solving = solve_by_sudoku();
                 solving |= solve_by_single_candidate();
             }
