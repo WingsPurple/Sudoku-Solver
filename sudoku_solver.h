@@ -43,7 +43,6 @@
  *  From what I understand everything gets converted to 64 bits in the ALU so the only memory it saves would be in ram
  */
 #pragma once
-#include <string>
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -143,14 +142,14 @@ public:
     }
     
     // initialize from file
-    explicit sudoku(const std::string& filename)
+    explicit sudoku(const char* filename)
     {
         board.resize(0, 0);
         read(filename);
     }
     
     // read in the board from a file
-    bool read(const std::string& filename);
+    bool read(const char* filename);
     
     // prints the current board
     void print_board(uint8_t highlight = 100, type t = NONE) const;

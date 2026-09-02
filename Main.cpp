@@ -1,5 +1,5 @@
 ﻿#include "sudoku_solver.h"
-uint8_t test(const std::string& board_file, const std::string& solution_file)
+uint8_t test(const char* board_file, const char* solution_file)
 {
     sudoku board;
     if (board.read(board_file) == false)

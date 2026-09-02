@@ -1,6 +1,6 @@
 #include "sudoku_solver.h"
 
-bool sudoku::read(const std::string& filename)
+bool sudoku::read(const char* filename)
 {
     // read board from a file
     if (std::ifstream file(filename); file.is_open())
