@@ -50,11 +50,11 @@ void sudoku::print_board(const uint8_t highlight, const type t) const
         // highlight the recently written number as red
         if (i == highlight)
         {
-            std::cout << "\033[31m" << (*this)[i] << "\033[0m ";
+            std::cout << "\033[31m" << U16_SC((*this)[i]) << "\033[0m ";
         }
         else
         {
-            std::cout << (*this)[i] << " ";
+            std::cout << U16_SC((*this)[i]) << " ";
         }
         if ((i + U8_SC(1)) % U8_SC(9) == U8_SC(0))
         {
@@ -239,7 +239,7 @@ bool sudoku::solve_by_sudoku()
 
 bool sudoku::solve_by_row(const uint8_t row, const uint8_t cell)
 {
-    std::vector<uint16_t> temp;
+    std::vector<uint8_t> temp;
     const uint8_t index = row * U8_SC(9);
     // iterate through row
     for (uint8_t i = index; i < index + U8_SC(9); i++)
@@ -272,7 +272,7 @@ bool sudoku::solve_by_row(const uint8_t row, const uint8_t cell)
 
 bool sudoku::solve_by_column(const uint8_t col, const uint8_t cell)
 {
-    std::vector<uint16_t> temp;
+    std::vector<uint8_t> temp;
     // iterate through column
     for (uint8_t i = col; i < U8_SC(81); i += U8_SC(9))
     {
@@ -304,7 +304,7 @@ bool sudoku::solve_by_column(const uint8_t col, const uint8_t cell)
 
 bool sudoku::solve_by_square(const uint8_t col, const uint8_t row, const uint8_t cell)
 {
-    std::vector<uint16_t> temp;
+    std::vector<uint8_t> temp;
     // iterate through rows
     for (uint8_t i = 0; i < U8_SC(3); i++)
     {
@@ -382,8 +382,8 @@ void sudoku::fill_notations_by_sudoku()
         // top left square is 0, 0, top middle square is 1, 0, top right square is 2, 0
         // middle left square is 0, 1, middle square is 1, 1, middle right square is 2, 1
         // bottom left square is 0, 2, bottom middle square is 1, 2, bottom right square is 2, 2
-        const uint16_t s_col = (cell % U8_SC(9)) / U8_SC(3);
-        const uint16_t s_row = (cell / U8_SC(9)) / U8_SC(3);
+        const uint8_t s_col = (cell % U8_SC(9)) / U8_SC(3);
+        const uint8_t s_row = (cell / U8_SC(9)) / U8_SC(3);
         // iterate through rows of the square
         for (uint8_t i = 0; i < U8_SC(3); i++)
         {
@@ -391,7 +391,7 @@ void sudoku::fill_notations_by_sudoku()
             for (uint8_t j = 0; j < U8_SC(3); j++)
             {
                 // index is the cell in the square we are checking
-                const uint16_t index = (s_row * U8_SC(3) + i) * U8_SC(9) + 
+                const uint8_t index = (s_row * U8_SC(3) + i) * U8_SC(9) + 
                     (s_col * U8_SC(3) + j);
                 // if we encounter a number in the square remove it from the list of possible numbers
                 if ((*this)[index] != U8_SC(0))
@@ -402,7 +402,7 @@ void sudoku::fill_notations_by_sudoku()
                         // iterate within row
                         for (uint8_t l = 0; l < U8_SC(3); l++)
                         {
-                            const uint16_t write_index = (s_row * U8_SC(3) + k) * 
+                            const uint8_t write_index = (s_row * U8_SC(3) + k) * 
                                 U8_SC(9) + (s_col * U8_SC(3) + l);
                             possibilities[write_index][(*this)[index] - 1] = U8_SC(0);
                         }

@@ -170,12 +170,12 @@ public:
     // not really happy having to use (*this)[] when reading and board[] when writing
     // not sure how to make it so that I can just use one or the other
     // it does make it so writing automatically removes the notations which is nice
-    uint16_t operator[](const size_t index) {
+    uint8_t operator[](const size_t index) {
         return board[index] & MASK;
     }
     
     // const version
-    uint16_t operator[](const size_t index) const {
+    uint8_t operator[](const size_t index) const {
         return board[index] & MASK;
     }
     
