@@ -83,6 +83,7 @@ void sudoku::solve()
         {
             solve_by_naked_pairs();
             //solve_by_naked_triples();
+            solve_by_hidden_pairs();
             solving = solve_by_sudoku();
             solving |= solve_by_single_candidate();
             // if nothing is found check if a second loop of pairs/triples finds anything
@@ -90,6 +91,7 @@ void sudoku::solve()
             {
                 solve_by_naked_pairs();
                 //solve_by_naked_triples();
+                solve_by_hidden_pairs();
                 solving = solve_by_sudoku();
                 solving |= solve_by_single_candidate();
             }
@@ -404,7 +406,7 @@ bool sudoku::solve_by_single_candidate()
     // iterate through all numbers
     for (uint8_t number = 1; number <= U8_SC(9); number++)
     {
-        // check all columns
+        // iterate through all columns
         for (uint8_t col = 0; col < U8_SC(9); col++)
         {
             uint8_t counter = 0;
@@ -431,7 +433,7 @@ bool sudoku::solve_by_single_candidate()
                 return true;
             }
         }
-        // check all rows
+        // iterate through all rows
         for (uint8_t row = 0; row < U8_SC(9); row++)
         {
             uint8_t counter = 0;
@@ -457,8 +459,8 @@ bool sudoku::solve_by_single_candidate()
                 return true;
             }
         }
-        // check all squares
         // iterate through all squares
+        // adding + 7 hits every square at least once
         for (uint8_t cell = 0; cell < U8_SC(81); cell += U8_SC(7))
         {
             // calculate the current row and column
@@ -890,11 +892,195 @@ bool sudoku::tiple_or_quad(const std::vector<uint8_t>& list, const std::vector<u
     return false;
 }
 
-/*
-
-bool sudoku::solve_by_hidden_pairs()
+void sudoku::solve_by_hidden_pairs()
 {
+    // iterate through all columns
+    for (uint8_t col = 0; col < U8_SC(9); col++)
+    {
+        std::vector<std::vector<uint8_t>> candidate{};
+        // don't need to check for pairs in the last cell so we only check up to 72
+        for (uint8_t i = col; i < U8_SC(72); i += U8_SC(9))
+        {
+            // check if a number is a candidate in the cell
+            for (uint8_t num = 1; num <= U8_SC(9); num++)
+            {
+                // if yes check if the same number is a candidate in exactly one other cell in the column
+                if (get_notation(i, num))
+                {
+                    uint8_t count = 1;
+                    // using 100 as the out of bounds/unset value since I can't do -1
+                    uint8_t cell2 = 100;
+                    for (uint8_t j = i + U8_SC(9); j < U8_SC(81); j += U8_SC(9))
+                    {
+                        if (get_notation(j, num))
+                        {
+                            count++;
+                            cell2 = j;
+                        }
+                    }
+                    // if yes remember the two cells
+                    if (count == U8_SC(2))
+                    {
+                        candidate.push_back({i, cell2, num});
+                    }
+                }
+            }
+        }
+        // check if there are two candidates with the same two cells and different numbers
+        for (const auto& pair : candidate)
+        {
+            for (const auto& pair2 : candidate)
+            {
+                // if yes remove all other candidates from the two cells
+                if (pair[0] == pair2[0] && pair[1] == pair2[1] && pair[2] != pair2[2])
+                {
+                    std::cout << "Found a hidden pair col: " << 
+                            U16_SC(pair[0]) << " " << U16_SC(pair[1])  << std::endl;
+                    for (uint8_t j = 1; j <= U8_SC(9); j++)
+                    {
+                        if (j == pair[2])
+                        {
+                            continue;
+                        }
+                        write_notation(pair[0], j, 0);
+                        write_notation(pair[1], j, 0);
+                    }
+                }
+            }
+        }
+    }
+    // iterate through all rows
+    for (uint8_t row = 0; row < U8_SC(9); row++)
+    {
+        std::vector<std::vector<uint8_t>> candidate{};
+        // don't need to check for pairs in the last cell so we only check up to 8th cell in the row
+        for (uint8_t i = 0; i < U8_SC(8); i++)
+        {
+            // calculate current cell
+            const uint8_t index = row * U8_SC(9) + i;
+            // check if a number is a candidate in the cell
+            for (uint8_t num = 1; num <= U8_SC(9); num++)
+            {
+                // if yes check if the same number is a candidate in exactly one other cell in the column
+                if (get_notation(index, num))
+                {
+                    uint8_t count = 1;
+                    // using 100 as the out of bounds/unset value since I can't do -1
+                    uint8_t cell2 = 100;
+                    const uint8_t next_row = (row + U8_SC(1)) * U8_SC(9);
+                    for (uint8_t j = index + U8_SC(1); j < next_row; j++)
+                    {
+                        if (get_notation(j, num))
+                        {
+                            count++;
+                            cell2 = j;
+                        }
+                    }
+                    // if yes remember the two cells
+                    if (count == U8_SC(2))
+                    {
+                        candidate.push_back({index, cell2, num});
+                    }
+                }
+            }
+        }
+        // check if there are two candidates with the same two cells and different numbers
+        for (const auto& pair : candidate)
+        {
+            for (const auto& pair2 : candidate)
+            {
+                // if yes remove all other candidates from the two cells
+                if (pair[0] == pair2[0] && pair[1] == pair2[1] && pair[2] != pair2[2])
+                {
+                    std::cout << "Found a hidden pair row: " << 
+                            U16_SC(pair[0]) << " " << U16_SC(pair[1])  << '\n';
+                    for (uint8_t j = 1; j <= U8_SC(9); j++)
+                    {
+                        if (j == pair[2])
+                        {
+                            continue;
+                        }
+                        write_notation(pair[0], j, 0);
+                        write_notation(pair[1], j, 0);
+                    }
+                }
+            }
+        }
+    }
+    // iterate through all squares
+    // adding + 7 hits every square at least once
+    for (uint8_t cell = 0; cell < U8_SC(81); cell += U8_SC(7))
+    {
+        // calculate the current row and column of the square
+        // top left square is 0, 0, top middle square is 1, 0, top right square is 2, 0
+        // middle left square is 0, 1, middle square is 1, 1, middle right square is 2, 1
+        // bottom left square is 0, 2, bottom middle square is 1, 2, bottom right square is 2, 2
+        const uint8_t s_col = (cell % U8_SC(9)) / U8_SC(3);
+        const uint8_t s_row = (cell / U8_SC(9)) / U8_SC(3);
+        std::vector<std::vector<uint8_t>> candidate{};
+        for (uint8_t i = 0; i < U8_SC(3); i++)
+        {
+            // iterate within row
+            for (uint8_t j = 0; j < U8_SC(3); j++)
+            {
+                // calculate current cell
+                const uint8_t index = (s_row * U8_SC(3) + i) *
+                        U8_SC(9) + (s_col * U8_SC(3) + j);
+                // check if a number is a candidate in the cell
+                for (uint8_t num = 1; num <= U8_SC(9); num++)
+                {
+                    // if yes check if the same number is a candidate in exactly one other cell in the column
+                    if (get_notation(index, num))
+                    {
+                        uint8_t count = 1;
+                        // using 100 as the out of bounds/unset value since I can't do -1
+                        uint8_t cell2 = 100;
+                        for (uint8_t k = i; k < U8_SC(3); k++)
+                        {
+                            for (uint8_t l = j + U8_SC(1); l < U8_SC(3); l++)
+                            {
+                                if (get_notation(j, num))
+                                {
+                                    count++;
+                                    cell2 = (s_row * U8_SC(3) + k) * U8_SC(9) + (s_col * U8_SC(3) + l);
+                                }
+                            }
+                        }
+                        // if yes remember the two cells
+                        if (count == U8_SC(2))
+                        {
+                            candidate.push_back({index, cell2, num});
+                        }
+                    }
+                }
+            }
+        }
+        for (const auto& pair : candidate)
+        {
+            for (const auto& pair2 : candidate)
+            {
+                // if yes remove all other candidates from the two cells
+                if (pair[0] == pair2[0] && pair[1] == pair2[1] && pair[2] != pair2[2])
+                {
+                    std::cout << "Found a hidden pair sq: " << 
+                            U16_SC(pair[0]) << " " << U16_SC(pair[1])  << '\n';
+                    for (uint8_t j = 1; j <= U8_SC(9); j++)
+                    {
+                        if (j == pair[2])
+                        {
+                            continue;
+                        }
+                        
+                        write_notation(pair[0], j, 0);
+                        write_notation(pair[1], j, 0);
+                    }
+                }
+            }
+        }
+    }
 }
+
+/*
 
 bool sudoku::solve_by_hidden_triples()
 {

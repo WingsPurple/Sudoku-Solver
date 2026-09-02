@@ -122,7 +122,7 @@ class sudoku
     static bool tiple_or_quad(const std::vector<uint8_t>& list, const std::vector<uint8_t>& candidate);
     
     // same as naked pair but other notations are in the cells with the pairs
-    bool solve_by_hidden_pairs();
+    void solve_by_hidden_pairs();
 
     // same as naked triples but other notations are in the cells with the pairs
     bool solve_by_hidden_triples();
