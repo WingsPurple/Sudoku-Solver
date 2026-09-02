@@ -114,7 +114,7 @@ class sudoku
     // (four numbers that all only appear as candidates in the same four cells within the column/row/square)
     // only cell needs to contain all four the other two cells just need to contain at least two of the same four 
     // as the one with all four
-    std::pair<bool, std::vector<uint16_t>> solve_by_naked_quads();
+    void solve_by_naked_quads();
     
     // helper function for triples and quads
     // checks if at least 2 of the notations are the same between vectors
@@ -124,16 +124,16 @@ class sudoku
     void solve_by_hidden_pairs();
 
     // same as naked triples but other notations are in the cells with the pairs
-    bool solve_by_hidden_triples();
+    void solve_by_hidden_triples();
     
     // same as naked pair but other notations are in the cells with the pairs
-    bool solve_by_hidden_quads();
+    void solve_by_hidden_quads();
 
-    bool solve_by_x_wing();
+    void solve_by_x_wing();
 
-    bool solve_by_y_wing();
+    void solve_by_y_wing();
 
-    bool solve_by_swordfish();
+    void solve_by_swordfish();
 public:
     // initialize empty board
     sudoku()
@@ -154,6 +154,7 @@ public:
     // prints the current board
     void print_board(uint8_t highlight = 100, type t = NONE) const;
     
+    // prints the difference between two boards
     void diff(const sudoku& rhs) const;
     
     // determines if the current board is solvable

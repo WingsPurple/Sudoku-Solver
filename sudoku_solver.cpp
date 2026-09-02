@@ -895,13 +895,6 @@ void sudoku::solve_by_naked_triples()
     }
 }
 
-/*
-std::pair<bool, std::vector<uint16_t>> sudoku::solve_by_naked_quads()
-{
-    return {false, std::vector<uint16_t>{}};
-}
-*/
-
 bool sudoku::tiple_or_quad(const std::vector<uint8_t>& list, const std::vector<uint8_t>& candidate)
 {
     uint8_t count = 0;
@@ -1113,27 +1106,23 @@ void sudoku::solve_by_hidden_pairs()
 
 /*
 
-bool sudoku::solve_by_hidden_triples()
+void sudoku::solve_by_hidden_triples()
 {
 }
 
-bool sudoku::solve_by_pointing_pairs()
+void sudoku::solve_by_naked_quads()
 {
 }
 
-bool sudoku::solve_by_pointing_triples()
+void sudoku::solve_by_x_wing()
 {
 }
 
-bool sudoku::solve_by_x_wing()
+void sudoku::solve_by_y_wing()
 {
 }
 
-bool sudoku::solve_by_y_wing()
-{
-}
-
-bool sudoku::solve_by_swordfish()
+void sudoku::solve_by_swordfish()
 {
 }
 
