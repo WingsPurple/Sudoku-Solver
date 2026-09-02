@@ -9,7 +9,7 @@ bool sudoku::read(const char* filename)
         {
             uint16_t temp;
             file >> temp;
-            board.push_back(temp);
+            board.emplace_back(temp);
         }
         file.close();
     }
@@ -80,11 +80,11 @@ void sudoku::diff(const sudoku& rhs) const
         // highlight the recently written number as red
         if ((*this)[i] != rhs.board[i])
         {
-            std::cout << "\033[31m" << (*this)[i] << "\033[0m ";
+            std::cout << "\033[31m" << U16_SC((*this)[i]) << "\033[0m ";
         }
         else
         {
-            std::cout << (*this)[i] << " ";
+            std::cout << U16_SC((*this)[i]) << " ";
         }
         if ((i + U8_SC(1)) % U8_SC(9) == U8_SC(0))
         {
@@ -170,7 +170,7 @@ void sudoku::write_notation(const uint8_t cell, const uint8_t number, const uint
 
 void sudoku::update_notation(const uint8_t cell)
 {
-    const uint8_t number = U8_SC((*this)[cell]);
+    const uint8_t number = (*this)[cell];
     const uint8_t col = cell % U8_SC(9);
     const uint8_t row = cell / U8_SC(9);
     // iterate through the column
@@ -252,7 +252,7 @@ bool sudoku::solve_by_row(const uint8_t row, const uint8_t cell)
         // find every unique number in that row
         if (std::find(temp.begin(), temp.end() , (*this)[i]) == temp.end())
         {
-            temp.push_back((*this)[i]);
+            temp.emplace_back((*this)[i]);
         }
         // if there are 8 unique numbers, the empty cell is the ninth
         if (temp.size() == U8_SC(8))
@@ -284,7 +284,7 @@ bool sudoku::solve_by_column(const uint8_t col, const uint8_t cell)
         // find every unique number in that column
         if (std::find(temp.begin(), temp.end() , (*this)[i]) == temp.end())
         {
-            temp.push_back((*this)[i]);
+            temp.emplace_back((*this)[i]);
         }
         // if there are 8 unique numbers, the empty cell is the ninth
         if (temp.size() == U8_SC(8))
@@ -321,7 +321,7 @@ bool sudoku::solve_by_square(const uint8_t col, const uint8_t row, const uint8_t
             }
             if (std::find(temp.begin(), temp.end(), (*this)[index]) == temp.end())
             {
-                temp.push_back((*this)[index]);
+                temp.emplace_back((*this)[index]);
             }
         }
     }
@@ -370,7 +370,7 @@ void sudoku::fill_notations_by_sudoku()
                 for (uint8_t j = 0; j < U8_SC(9); j++)
                 {
                     possibilities[row * U8_SC(9) + j]
-                    [(*this)[row * U8_SC(9) + i] - 1] = U8_SC(0);
+                    [(*this)[row * U8_SC(9) + i] - U8_SC(1)] = U8_SC(0);
                 }
             }
         }
@@ -404,7 +404,7 @@ void sudoku::fill_notations_by_sudoku()
                         {
                             const uint8_t write_index = (s_row * U8_SC(3) + k) * 
                                 U8_SC(9) + (s_col * U8_SC(3) + l);
-                            possibilities[write_index][(*this)[index] - 1] = U8_SC(0);
+                            possibilities[write_index][(*this)[index] - U8_SC(1)] = U8_SC(0);
                         }
                     }
                 }
@@ -415,7 +415,7 @@ void sudoku::fill_notations_by_sudoku()
         {
             if (possibilities[cell][i] != U8_SC(0) && (*this)[cell] == U8_SC(0))
             {
-                write_notation(cell, i + 1, possibilities[cell][i]);
+                write_notation(cell, i + U8_SC(1), possibilities[cell][i]);
             }
         }
     }
@@ -550,7 +550,7 @@ void sudoku::solve_by_naked_pairs()
             if (get_notation(cell, i) == true)
             {
                 count++;
-                pair1.push_back(i);
+                pair1.emplace_back(i);
             }
         }
         // if a cell is found with exactly 2 notations try to find another with the same exact 2 notations
@@ -584,7 +584,7 @@ void sudoku::solve_by_naked_pairs()
                     if (get_notation(i, j) == true)
                     {
                         count++;
-                        pair2.push_back(j);
+                        pair2.emplace_back(j);
                     }
                 }
                 // if an identical pair is found remove the found notations from the rest of the column
@@ -624,8 +624,8 @@ void sudoku::solve_by_naked_pairs()
                     {
                         if (get_notation(index, j) == true)
                         {
-                            count += 1;
-                            pair2.push_back(j);
+                            count ++;
+                            pair2.emplace_back(j);
                         }
                     }
                     // if an identical pair is found remove the found notations from the rest of the row
@@ -669,7 +669,7 @@ void sudoku::solve_by_naked_pairs()
                         if (get_notation(index, k) == true)
                         {
                             count++;
-                            pair2.push_back(k);
+                            pair2.emplace_back(k);
                         }
                     }
                     // if an identical pair is found remove the found notations from the rest of the square
@@ -715,7 +715,7 @@ void sudoku::solve_by_naked_triples()
             if (get_notation(cell, i) == true)
             {
                 count++;
-                triple1.push_back(i);
+                triple1.emplace_back(i);
             }
         }
         // if a cell is found with exactly 3 notations try to find 2 more with at least 2 of the same 3 notations
@@ -748,7 +748,7 @@ void sudoku::solve_by_naked_triples()
                     if (get_notation(i, j) == true)
                     {
                         count++;
-                        triple2.push_back(j);
+                        triple2.emplace_back(j);
                     }
                 }
                 if (count > U8_SC(1) && count < U8_SC(4)
@@ -799,7 +799,7 @@ void sudoku::solve_by_naked_triples()
                         if (get_notation(index, j) == true)
                         {
                             count++;
-                            triple2.push_back(j);
+                            triple2.emplace_back(j);
                         }
                     }
                     if (count > U8_SC(1) && count < U8_SC(4)
@@ -853,7 +853,7 @@ void sudoku::solve_by_naked_triples()
                         if (get_notation(index, k) == true)
                         {
                             count++;
-                            triple2.push_back(k);
+                            triple2.emplace_back(k);
                         }
                     }
                     if (count > U8_SC(1) && count < U8_SC(4)
@@ -952,7 +952,7 @@ void sudoku::solve_by_hidden_pairs()
                     // if yes remember the two cells
                     if (count == U8_SC(2))
                     {
-                        candidate.push_back({i, cell2, num});
+                        candidate.emplace_back(std::initializer_list{i, cell2, num});
                     }
                 }
             }
@@ -966,7 +966,7 @@ void sudoku::solve_by_hidden_pairs()
                 if (pair[0] == pair2[0] && pair[1] == pair2[1] && pair[2] != pair2[2])
                 {
                     std::cout << "Found a hidden pair col: " << 
-                            U16_SC(pair[0]) << " " << U16_SC(pair[1])  << std::endl;
+                            U16_SC(pair[0]) << " " << U16_SC(pair[1])  << '\n';
                     for (uint8_t j = 1; j <= U8_SC(9); j++)
                     {
                         if (j == pair[2])
@@ -1010,7 +1010,7 @@ void sudoku::solve_by_hidden_pairs()
                     // if yes remember the two cells
                     if (count == U8_SC(2))
                     {
-                        candidate.push_back({index, cell2, num});
+                        candidate.emplace_back(std::initializer_list{index, cell2, num});
                     }
                 }
             }
@@ -1080,7 +1080,7 @@ void sudoku::solve_by_hidden_pairs()
                         // if yes remember the two cells
                         if (count == U8_SC(2))
                         {
-                            candidate.push_back({index, cell2, num});
+                            candidate.emplace_back(std::initializer_list{index, cell2, num});
                         }
                     }
                 }
