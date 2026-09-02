@@ -114,7 +114,7 @@ void sudoku::solve()
         {
             solve_by_naked_pairs();
             //solve_by_naked_triples();
-            //solve_by_hidden_pairs();
+            solve_by_hidden_pairs();
             solving = solve_by_sudoku();
             solving |= solve_by_single_candidate();
             // if nothing is found check if a second loop of pairs/triples finds anything
@@ -547,7 +547,7 @@ void sudoku::solve_by_naked_pairs()
         std::vector<uint8_t> pair1{};
         for (uint8_t i = 1; i <= U8_SC(9); i++)
         {
-            if (get_notation(cell, i) == true)
+            if (get_notation(cell, i))
             {
                 count++;
                 pair1.emplace_back(i);
@@ -581,7 +581,7 @@ void sudoku::solve_by_naked_pairs()
                 std::vector<uint8_t> pair2{};
                 for (uint8_t j = 1; j <= U8_SC(9); j++)
                 {
-                    if (get_notation(i, j) == true)
+                    if (get_notation(i, j))
                     {
                         count++;
                         pair2.emplace_back(j);
@@ -622,7 +622,7 @@ void sudoku::solve_by_naked_pairs()
                     }
                     for (uint8_t j = 1; j <= U8_SC(9); j++)
                     {
-                        if (get_notation(index, j) == true)
+                        if (get_notation(index, j))
                         {
                             count ++;
                             pair2.emplace_back(j);
@@ -666,7 +666,7 @@ void sudoku::solve_by_naked_pairs()
                     }
                     for (uint8_t k = 1; k <= U8_SC(9); k++)
                     {
-                        if (get_notation(index, k) == true)
+                        if (get_notation(index, k))
                         {
                             count++;
                             pair2.emplace_back(k);
@@ -712,7 +712,7 @@ void sudoku::solve_by_naked_triples()
         std::vector<uint8_t> triple1{};
         for (uint8_t i = 1; i <= U8_SC(9); i++)
         {
-            if (get_notation(cell, i) == true)
+            if (get_notation(cell, i))
             {
                 count++;
                 triple1.emplace_back(i);
@@ -745,14 +745,14 @@ void sudoku::solve_by_naked_triples()
                 std::vector<uint8_t> triple2{};
                 for (uint8_t j = 1; j <= U8_SC(9); j++)
                 {
-                    if (get_notation(i, j) == true)
+                    if (get_notation(i, j))
                     {
                         count++;
                         triple2.emplace_back(j);
                     }
                 }
                 if (count > U8_SC(1) && count < U8_SC(4)
-                    && tiple_or_quad(triple1, triple2) == true)
+                    && tiple_or_quad(triple1, triple2))
                 {
                     // if a cell with 2/3 or 3/3 notations is found remember it
                     if (cell2 == U8_SC(100))
@@ -796,14 +796,14 @@ void sudoku::solve_by_naked_triples()
                     }
                     for (uint8_t j = 1; j <= U8_SC(9); j++)
                     {
-                        if (get_notation(index, j) == true)
+                        if (get_notation(index, j))
                         {
                             count++;
                             triple2.emplace_back(j);
                         }
                     }
                     if (count > U8_SC(1) && count < U8_SC(4)
-                        && tiple_or_quad(triple1, triple2) == true)
+                        && tiple_or_quad(triple1, triple2))
                     {
                         // if a cell with 2/3 or 3/3 notations is found remember it
                         if (cell2 == U8_SC(100))
@@ -850,14 +850,14 @@ void sudoku::solve_by_naked_triples()
                     }
                     for (uint8_t k = 1; k <= U8_SC(9); k++)
                     {
-                        if (get_notation(index, k) == true)
+                        if (get_notation(index, k))
                         {
                             count++;
                             triple2.emplace_back(k);
                         }
                     }
                     if (count > U8_SC(1) && count < U8_SC(4)
-                        && tiple_or_quad(triple1, triple2) == true)
+                        && tiple_or_quad(triple1, triple2))
                     {
                         // if a cell with 2/3 or 3/3 notations is found remember it
                         if (cell2 == U8_SC(100))
@@ -925,6 +925,11 @@ void sudoku::solve_by_hidden_pairs()
         // don't need to check for pairs in the last cell so we only check up to 72
         for (uint8_t i = col; i < U8_SC(72); i += U8_SC(9))
         {
+            // skip filled in cells
+            if ((*this)[i] != U8_SC(0))
+            {
+                continue;
+            }
             // check if a number is a candidate in the cell
             for (uint8_t num = 1; num <= U8_SC(9); num++)
             {
@@ -982,6 +987,11 @@ void sudoku::solve_by_hidden_pairs()
         {
             // calculate current cell
             const uint8_t index = row * U8_SC(9) + i;
+            // skip filled in cells
+            if ((*this)[index] != U8_SC(0))
+            {
+                continue;
+            }
             // check if a number is a candidate in the cell
             for (uint8_t num = 1; num <= U8_SC(9); num++)
             {
@@ -1050,6 +1060,11 @@ void sudoku::solve_by_hidden_pairs()
                 // calculate current cell
                 const uint8_t index = (s_row * U8_SC(3) + i) *
                         U8_SC(9) + (s_col * U8_SC(3) + j);
+                // skip filled in cells
+                if ((*this)[index] != U8_SC(0))
+                {
+                    continue;
+                }
                 // check if a number is a candidate in the cell
                 for (uint8_t num = 1; num <= U8_SC(9); num++)
                 {
