@@ -48,6 +48,7 @@
 #include <vector>
 #include <fstream>
 #include <cstdint>
+#include <algorithm>
 
 #define MASK 0x0F
 #define U8_SC static_cast<uint8_t>
