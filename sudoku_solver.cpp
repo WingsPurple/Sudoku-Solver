@@ -112,17 +112,18 @@ void sudoku::solve()
         fill_notations_by_sudoku();
         while (solving)
         {
+            solve_by_hidden_pairs();
             solve_by_naked_pairs();
             //solve_by_naked_triples();
-            solve_by_hidden_pairs();
+            
             solving = solve_by_sudoku();
             solving |= solve_by_single_candidate();
             // if nothing is found check if a second loop of pairs/triples finds anything
             if (solving == false)
             {
+                solve_by_hidden_pairs();
                 solve_by_naked_pairs();
                 //solve_by_naked_triples();
-                //solve_by_hidden_pairs();
                 solving = solve_by_sudoku();
                 solving |= solve_by_single_candidate();
             }
@@ -923,10 +924,10 @@ void sudoku::solve_by_hidden_pairs()
     {
         std::vector<std::vector<uint8_t>> candidate{};
         // don't need to check for pairs in the last cell so we only check up to 72
-        for (uint8_t i = col; i < U8_SC(72); i += U8_SC(9))
+        for (uint8_t cell = col; cell < U8_SC(72); cell += U8_SC(9))
         {
             // skip filled in cells
-            if ((*this)[i] != U8_SC(0))
+            if ((*this)[cell] != U8_SC(0))
             {
                 continue;
             }
@@ -934,12 +935,12 @@ void sudoku::solve_by_hidden_pairs()
             for (uint8_t num = 1; num <= U8_SC(9); num++)
             {
                 // if yes check if the same number is a candidate in exactly one other cell in the column
-                if (get_notation(i, num))
+                if (get_notation(cell, num))
                 {
                     uint8_t count = 1;
                     // using 100 as the out of bounds/unset value since I can't do -1
                     uint8_t cell2 = 100;
-                    for (uint8_t j = i + U8_SC(9); j < U8_SC(81); j += U8_SC(9))
+                    for (uint8_t j = cell + U8_SC(9); j < U8_SC(81); j += U8_SC(9))
                     {
                         if (get_notation(j, num))
                         {
@@ -950,7 +951,7 @@ void sudoku::solve_by_hidden_pairs()
                     // if yes remember the two cells
                     if (count == U8_SC(2))
                     {
-                        candidate.emplace_back(std::initializer_list{i, cell2, num});
+                        candidate.emplace_back(std::initializer_list{cell, cell2, num});
                     }
                 }
             }
