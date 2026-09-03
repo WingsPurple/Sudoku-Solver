@@ -967,7 +967,7 @@ void sudoku::solve_by_hidden_pairs()
                             U16_SC(pair[0]) << " " << U16_SC(pair[1])  << '\n';
                     for (uint8_t j = 1; j <= U8_SC(9); j++)
                     {
-                        if (j == pair[2])
+                        if (j == pair[2] || j == pair2[2])
                         {
                             continue;
                         }
@@ -1030,7 +1030,7 @@ void sudoku::solve_by_hidden_pairs()
                             U16_SC(pair[0]) << " " << U16_SC(pair[1])  << '\n';
                     for (uint8_t j = 1; j <= U8_SC(9); j++)
                     {
-                        if (j == pair[2])
+                        if (j == pair[2] || j == pair2[2])
                         {
                             continue;
                         }
@@ -1105,7 +1105,7 @@ void sudoku::solve_by_hidden_pairs()
                             U16_SC(pair[0]) << " " << U16_SC(pair[1])  << '\n';
                     for (uint8_t j = 1; j <= U8_SC(9); j++)
                     {
-                        if (j == pair[2])
+                        if (j == pair[2] || j == pair2[2])
                         {
                             continue;
                         }
