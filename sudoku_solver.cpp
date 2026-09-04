@@ -112,6 +112,7 @@ void sudoku::solve()
         fill_notations_by_sudoku();
         while (solving)
         {
+            std::cout << "\t\t\t\t\t\t\tc1\tc2\tn1\tn2\n";
             solve_by_pointing_pairs();
             solve_by_hidden_pairs();
             solve_by_naked_pairs();
@@ -1056,10 +1057,13 @@ void sudoku::solve_by_hidden_pairs()
                 }
             }
         }
+        uint8_t index = 0;
         // check if there are two candidates with the same two cells and different numbers
         for (const auto& pair : candidate)
         {
-            for (const auto& pair2 : candidate)
+            index++;
+            // start where pair is in the list to avoid checking the same pair twice
+            for (const auto& pair2 : candidate | std::views::drop(index))
             {
                 // if yes remove all other candidates from the two cells
                 if (pair[0] == pair2[0] && pair[1] == pair2[1] && pair[2] != pair2[2])
@@ -1123,10 +1127,13 @@ void sudoku::solve_by_hidden_pairs()
                 }
             }
         }
+        uint8_t index = 0;
         // check if there are two candidates with the same two cells and different numbers
         for (const auto& pair : candidate)
         {
-            for (const auto& pair2 : candidate)
+            index++;
+            // start where pair is in the list to avoid checking the same pair twice
+            for (const auto& pair2 : candidate | std::views::drop(index))
             {
                 // if yes remove all other candidates from the two cells
                 if (pair[0] == pair2[0] && pair[1] == pair2[1] && pair[2] != pair2[2])
@@ -1206,9 +1213,13 @@ void sudoku::solve_by_hidden_pairs()
                 }
             }
         }
+        uint8_t index = 0;
+        // check if there are two candidates with the same two cells and different numbers
         for (const auto& pair : candidate)
         {
-            for (const auto& pair2 : candidate)
+            index++;
+            // start where pair is in the list to avoid checking the same pair twice
+            for (const auto& pair2 : candidate | std::views::drop(index))
             {
                 // if yes remove all other candidates from the two cells
                 if (pair[0] == pair2[0] && pair[1] == pair2[1] && pair[2] != pair2[2])
