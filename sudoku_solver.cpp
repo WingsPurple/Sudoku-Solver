@@ -112,15 +112,16 @@ void sudoku::solve()
         fill_notations_by_sudoku();
         while (solving)
         {
+            solve_by_pointing_pairs();
             solve_by_hidden_pairs();
             solve_by_naked_pairs();
             //solve_by_naked_triples();
-            
             solving = solve_by_sudoku();
             solving |= solve_by_single_candidate();
             // if nothing is found check if a second loop of pairs/triples finds anything
             if (solving == false)
             {
+                solve_by_pointing_pairs();
                 solve_by_hidden_pairs();
                 solve_by_naked_pairs();
                 //solve_by_naked_triples();
@@ -433,6 +434,101 @@ void sudoku::clear_notations()
     }
 }
 
+void sudoku::solve_by_pointing_pairs()
+{
+    // iterate through all numbers
+    for (uint8_t num = 1; num <= U8_SC(9); num++)
+    {
+        // iterate through all columns
+        for (uint8_t col = 0; col < U8_SC(9); col++)
+        {
+            uint8_t count = 0;
+            std::vector<uint8_t> cells{};
+            // iterate through current column
+            for (uint8_t i = col; i < U8_SC(81); i += U8_SC(9))
+            {
+                if (get_notation(i, num))
+                {
+                    count++;
+                    cells.emplace_back(i);
+                }
+            }
+            // if a candidate appears exactly twice within the column
+            if (count == U8_SC(2))
+            {
+                // check if the two candidates are in the same square
+                const uint8_t s_row = (cells[0] / U8_SC(9)) / U8_SC(3);
+                const uint8_t s_col = (cells[0] % U8_SC(9)) / U8_SC(3);
+                if (s_row == cells[1] / U8_SC(9) / U8_SC(3) &&
+                    s_col == cells[1] % U8_SC(9) / U8_SC(3))
+                {
+                    std::cout << "Pointing pair found col:\t" 
+                                << U16_SC(cells[0]) << "\t" << U16_SC(cells[1]) << "\t" << U16_SC(num) << '\n';
+                    // go through the square
+                    for (uint8_t i = 0; i < U8_SC(3); i++)
+                    {
+                        // iterate within row
+                        for (uint8_t j = 0; j < U8_SC(3); j++)
+                        {
+                            // index is the cell in the square we are checking
+                            const uint8_t index = (s_row * U8_SC(3) + i) *
+                                U8_SC(9) + (s_col * U8_SC(3) + j);
+                            if (index == cells[0] || index == cells[1])
+                            {
+                                continue;
+                            }
+                            write_notation(index, num, 0);
+                        }
+                    }
+                }
+            }
+        }
+        // iterate through all rows
+        for (uint8_t row = 0; row < U8_SC(81); row += U8_SC(9))
+        {
+            uint8_t count = 0;
+            std::vector<uint8_t> cells{};
+            for (uint8_t i = row; i < row + U8_SC(9); i ++)
+            {
+                if (get_notation(i, num))
+                {
+                    count++;
+                    cells.emplace_back(i);
+                }
+            }
+            // if a candidate appears exactly twice within the row
+            if (count == U8_SC(2))
+            {
+                // check if the two candidates are in the same square
+                const uint8_t s_row = (cells[0] / U8_SC(9)) / U8_SC(3);
+                const uint8_t s_col = (cells[0] % U8_SC(9)) / U8_SC(3);
+                if (s_row == cells[1] / U8_SC(9) / U8_SC(3) &&
+                    s_col == cells[1] % U8_SC(9) / U8_SC(3))
+                {
+                    std::cout << "Pointing pair found row:\t" 
+                                << U16_SC(cells[0]) << "\t" << U16_SC(cells[1]) << "\t" << U16_SC(num) << '\n';
+                    // go through the square
+                    for (uint8_t i = 0; i < U8_SC(3); i++)
+                    {
+                        // iterate within row
+                        for (uint8_t j = 0; j < U8_SC(3); j++)
+                        {
+                            // index is the cell in the square we are checking
+                            const uint8_t index = (s_row * U8_SC(3) + i) *
+                                U8_SC(9) + (s_col * U8_SC(3) + j);
+                            if (index == cells[0] || index == cells[1])
+                            {
+                                continue;
+                            }
+                            write_notation(index, num, 0);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 bool sudoku::solve_by_single_candidate()
 {
     // iterate through all numbers
@@ -602,8 +698,8 @@ void sudoku::solve_by_naked_pairs()
                     }
                     found1 = i;
                     found = true;
-                    std::cout << "Found a naked pair col: " << 
-                        U16_SC(cell) << " " << U16_SC(i)  << '\n';
+                    std::cout << "Found a naked pair col:\t\t" << U16_SC(cell) << "\t" << U16_SC(i)  << "\t" 
+                        << U16_SC(pair1.front()) << "\t" << U16_SC(pair1.back()) <<'\n';
                 }
             }
             // we can skip the row check if the pair is found in a column
@@ -643,8 +739,8 @@ void sudoku::solve_by_naked_pairs()
                             write_notation(temp, pair1.back(), 0);
                         }
                         found2 = index;
-                        std::cout << "Found a naked pair row: " << 
-                            U16_SC(cell) << " " << U16_SC(index)  << '\n';
+                        std::cout << "Found a naked pair row:\t\t" << U16_SC(cell) << "\t" << U16_SC(index) << "\t" 
+                            << U16_SC(pair1.front()) << "\t" << U16_SC(pair1.back()) << '\n';
                     }
                 }
             }
@@ -692,8 +788,8 @@ void sudoku::solve_by_naked_pairs()
                                 write_notation(final_index, pair1.back(), 0);
                             }
                         }
-                        std::cout << "Found a naked pair sq: " << 
-                            U16_SC(cell) << " " << U16_SC(index)  << '\n';
+                        std::cout << "Found a naked pair sq:\t\t" << U16_SC(cell) << "\t" << U16_SC(index)  << "\t" 
+                            << U16_SC(pair1.front()) << "\t" << U16_SC(pair1.back()) << '\n';
                     }
                 }
             }
@@ -940,8 +1036,12 @@ void sudoku::solve_by_hidden_pairs()
                     uint8_t count = 1;
                     // using 100 as the out of bounds/unset value since I can't do -1
                     uint8_t cell2 = 100;
-                    for (uint8_t j = cell + U8_SC(9); j < U8_SC(81); j += U8_SC(9))
+                    for (uint8_t j = col; j < U8_SC(81); j += U8_SC(9))
                     {
+                        if (j == cell)
+                        {
+                            continue;
+                        }
                         if (get_notation(j, num))
                         {
                             count++;
@@ -964,8 +1064,8 @@ void sudoku::solve_by_hidden_pairs()
                 // if yes remove all other candidates from the two cells
                 if (pair[0] == pair2[0] && pair[1] == pair2[1] && pair[2] != pair2[2])
                 {
-                    std::cout << "Found a hidden pair col: " << 
-                            U16_SC(pair[0]) << " " << U16_SC(pair[1])  << '\n';
+                    std::cout << "Found a hidden pair col:\t" << U16_SC(pair[0]) << "\t" << U16_SC(pair[1])  << "\t" 
+                        << U16_SC(pair[2]) << "\t" << U16_SC(pair2[2]) << '\n';
                     for (uint8_t j = 1; j <= U8_SC(9); j++)
                     {
                         if (j == pair[2] || j == pair2[2])
@@ -1003,8 +1103,12 @@ void sudoku::solve_by_hidden_pairs()
                     // using 100 as the out of bounds/unset value since I can't do -1
                     uint8_t cell2 = 100;
                     const uint8_t next_row = (row + U8_SC(1)) * U8_SC(9);
-                    for (uint8_t j = index + U8_SC(1); j < next_row; j++)
+                    for (uint8_t j = row * U8_SC(9); j < next_row; j++)
                     {
+                        if (j == index)
+                        {
+                            continue;
+                        }
                         if (get_notation(j, num))
                         {
                             count++;
@@ -1027,8 +1131,8 @@ void sudoku::solve_by_hidden_pairs()
                 // if yes remove all other candidates from the two cells
                 if (pair[0] == pair2[0] && pair[1] == pair2[1] && pair[2] != pair2[2])
                 {
-                    std::cout << "Found a hidden pair row: " << 
-                            U16_SC(pair[0]) << " " << U16_SC(pair[1])  << '\n';
+                    std::cout << "Found a hidden pair row:\t" << U16_SC(pair[0]) << "\t" << U16_SC(pair[1])  << "\t" 
+                        << U16_SC(pair[2]) << "\t" << U16_SC(pair2[2]) << '\n';
                     for (uint8_t j = 1; j <= U8_SC(9); j++)
                     {
                         if (j == pair[2] || j == pair2[2])
@@ -1075,14 +1179,21 @@ void sudoku::solve_by_hidden_pairs()
                         uint8_t count = 1;
                         // using 100 as the out of bounds/unset value since I can't do -1
                         uint8_t cell2 = 100;
-                        for (uint8_t k = i; k < U8_SC(3); k++)
+                        for (uint8_t k = 0; k < U8_SC(3); k++)
                         {
-                            for (uint8_t l = j + U8_SC(1); l < U8_SC(3); l++)
+                            for (uint8_t l = 0 + U8_SC(1); l < U8_SC(3); l++)
                             {
+                                // calculate current cell
+                                const uint8_t index2 = (s_row * U8_SC(3) + i) *
+                                        U8_SC(9) + (s_col * U8_SC(3) + j);
+                                if (index == index2)
+                                {
+                                    continue;
+                                }
                                 if (get_notation(j, num))
                                 {
                                     count++;
-                                    cell2 = (s_row * U8_SC(3) + k) * U8_SC(9) + (s_col * U8_SC(3) + l);
+                                    cell2 = index2;
                                 }
                             }
                         }
@@ -1102,8 +1213,8 @@ void sudoku::solve_by_hidden_pairs()
                 // if yes remove all other candidates from the two cells
                 if (pair[0] == pair2[0] && pair[1] == pair2[1] && pair[2] != pair2[2])
                 {
-                    std::cout << "Found a hidden pair sq: " << 
-                            U16_SC(pair[0]) << " " << U16_SC(pair[1])  << '\n';
+                    std::cout << "Found a hidden pair sq:\t" << U16_SC(pair[0]) << "\t" << U16_SC(pair[1])  << "\t" 
+                        << U16_SC(pair[2]) << "\t" << U16_SC(pair2[2]) << '\n';
                     for (uint8_t j = 1; j <= U8_SC(9); j++)
                     {
                         if (j == pair[2] || j == pair2[2])

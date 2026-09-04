@@ -84,6 +84,28 @@ class sudoku
 
     // removes all notations from empty cells
     void clear_notations();
+    
+    void solve_by_pointing_pairs();
+    
+    // same as naked pair but other notations are in the cells with the pairs
+    void solve_by_hidden_pairs();
+
+    // uses candidate elimination
+    // with the knowledge that elsewhere in that square is occupied with a naked pair
+    // (two numbers that can both only be in the same two cells in the square)
+    void solve_by_naked_pairs();
+    
+    // same as naked triples but other notations are in the cells with the pairs
+    void solve_by_hidden_triples();
+    
+    // uses candidate elimination by identifying triples
+    // (three numbers that all only appear as candidates in the same three cells within the column/row/square)
+    // only cell needs to contain all three the other two cells just need to contain at least two of the same three 
+    // as the one with all three
+    void solve_by_naked_triples();
+    
+    // same as naked pair but other notations are in the cells with the pairs
+    void solve_by_hidden_quads();
 
     // checks for single candidate in column, row, and square ( does not use notations )
     bool solve_by_sudoku();
@@ -98,17 +120,6 @@ class sudoku
     // checks one square at a time to see if there is only one valid location for a number 
     // relies on notations
     bool solve_by_single_candidate();
-
-    // uses candidate elimination
-    // with the knowledge that elsewhere in that square is occupied with a naked pair
-    // (two numbers that can both only be in the same two cells in the square)
-    void solve_by_naked_pairs();
-
-    // uses candidate elimination by identifying triples
-    // (three numbers that all only appear as candidates in the same three cells within the column/row/square)
-    // only cell needs to contain all three the other two cells just need to contain at least two of the same three 
-    // as the one with all three
-    void solve_by_naked_triples();
     
     // uses candidate elimination by identifying quads
     // (four numbers that all only appear as candidates in the same four cells within the column/row/square)
@@ -119,15 +130,6 @@ class sudoku
     // helper function for triples and quads
     // checks if at least 2 of the notations are the same between vectors
     static bool tiple_or_quad(const std::vector<uint8_t>& list, const std::vector<uint8_t>& candidate);
-    
-    // same as naked pair but other notations are in the cells with the pairs
-    void solve_by_hidden_pairs();
-
-    // same as naked triples but other notations are in the cells with the pairs
-    void solve_by_hidden_triples();
-    
-    // same as naked pair but other notations are in the cells with the pairs
-    void solve_by_hidden_quads();
 
     void solve_by_x_wing();
 
