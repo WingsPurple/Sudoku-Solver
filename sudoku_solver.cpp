@@ -1264,7 +1264,6 @@ void sudoku::solve_by_hidden_pairs()
                         {
                             continue;
                         }
-                        
                         write_notation(pair[0], j, 0);
                         write_notation(pair[1], j, 0);
                     }
@@ -1273,27 +1272,3 @@ void sudoku::solve_by_hidden_pairs()
         }
     }
 }
-
-/*
-
-void sudoku::solve_by_hidden_triples()
-{
-}
-
-void sudoku::solve_by_naked_quads()
-{
-}
-
-void sudoku::solve_by_x_wing()
-{
-}
-
-void sudoku::solve_by_y_wing()
-{
-}
-
-void sudoku::solve_by_swordfish()
-{
-}
-
-*/
