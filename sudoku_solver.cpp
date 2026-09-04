@@ -41,9 +41,13 @@ void sudoku::print_board(const uint8_t highlight, const type t) const
     {
         std::cout << "Solved By Sudoku: \n";
     }
-    if (t == SINGLE)
+    if (t == HIDDEN_SINGLE)
     {
-        std::cout << "Solved By Single Candidate: \n";
+        std::cout << "Solved By Hidden Single: \n";
+    }
+    if (t == NAKED_SINGLE)
+    {
+        std::cout << "Solved By Naked Single: \n";
     }
     for (uint8_t i = 0; i < U8_SC(81); i++)
     {
@@ -118,7 +122,8 @@ void sudoku::solve()
             solve_by_naked_pairs();
             //solve_by_naked_triples();
             solving = solve_by_sudoku();
-            solving |= solve_by_single_candidate();
+            solving |= solve_by_naked_single();
+            solving |= solve_by_hidden_single();
             // if nothing is found check if a second loop of pairs/triples finds anything
             if (solving == false)
             {
@@ -127,7 +132,8 @@ void sudoku::solve()
                 solve_by_naked_pairs();
                 //solve_by_naked_triples();
                 solving = solve_by_sudoku();
-                solving |= solve_by_single_candidate();
+                solving |= solve_by_naked_single();
+                solving |= solve_by_hidden_single();
             }
         }
     }
@@ -144,7 +150,7 @@ bool sudoku::solve_step()
         {
             return true;
         }
-        if (solve_by_single_candidate())
+        if (solve_by_hidden_single())
         {
             return true;
         }
@@ -343,6 +349,32 @@ bool sudoku::solve_by_square(const uint8_t col, const uint8_t row, const uint8_t
     return false;
 }
 
+bool sudoku::solve_by_naked_single()
+{
+    // iterate through the board
+    for (uint8_t i = 0; i < U8_SC(81); i++)
+    {
+        uint8_t count = 0;
+        uint8_t candidate = 0;
+        // count how many candidates a cell has
+        for (uint8_t num = 1; num <= U8_SC(9); num++)
+        {
+            if (get_notation(i, num))
+            {
+                count++;
+                candidate = num;
+            }
+        }
+        // if there is only one single candidate, write it to the cell
+        if (count == 1)
+        {
+            write(i, candidate, NAKED_SINGLE);
+            return true;
+        }
+    }
+    return false;
+}
+
 
 void sudoku::fill_notations_by_sudoku()
 {
@@ -530,7 +562,7 @@ void sudoku::solve_by_pointing_pairs()
     }
 }
 
-bool sudoku::solve_by_single_candidate()
+bool sudoku::solve_by_hidden_single()
 {
     // iterate through all numbers
     for (uint8_t number = 1; number <= U8_SC(9); number++)
@@ -558,7 +590,7 @@ bool sudoku::solve_by_single_candidate()
             // if the number is only found once as a notation then write it to the cell
             if (counter == U8_SC(1))
             {
-                write(cell, number, SINGLE);
+                write(cell, number, HIDDEN_SINGLE);
                 return true;
             }
         }
@@ -584,7 +616,7 @@ bool sudoku::solve_by_single_candidate()
             // if the number is only found once as a notation then write it to the cell
             if (counter == U8_SC(1))
             {
-                write(found, number, SINGLE);
+                write(found, number, HIDDEN_SINGLE);
                 return true;
             }
         }
@@ -627,7 +659,7 @@ bool sudoku::solve_by_single_candidate()
             // if the number is only found once as a notation then write it to the cell
             if (counter == U8_SC(1))
             {
-                write(found, number, SINGLE);
+                write(found, number, HIDDEN_SINGLE);
                 return true;
             }
         }

@@ -60,7 +60,8 @@ class sudoku
     {
         NONE,
         SUDOKU,
-        SINGLE
+        HIDDEN_SINGLE,
+        NAKED_SINGLE
     };
     // the first 4 bits of the uint16_t represent the number in the cell
     // the next 9 represent the notations for numbers 1-9
@@ -86,29 +87,34 @@ class sudoku
     // removes all notations from empty cells
     void clear_notations();
     
+    // candidate elimination
+    // checks if the only two candidates for a col/row are within the same square
+    // if they are then remove that candidate from the other cells in that square
     void solve_by_pointing_pairs();
     
+    // candidate elimination
     // same as naked pair but other notations are in the cells with the pairs
     void solve_by_hidden_pairs();
 
-    // uses candidate elimination
-    // with the knowledge that elsewhere in that square is occupied with a naked pair
-    // (two numbers that can both only be in the same two cells in the square)
+    // candidate elimination
+    // checks for two cells within the same col/row/sq with exactly the same two candidates
+    // if found then remove those two candidates from all other cells in that col/row/sq
     void solve_by_naked_pairs();
     
     // same as naked triples but other notations are in the cells with the pairs
     void solve_by_hidden_triples();
     
-    // uses candidate elimination by identifying triples
-    // (three numbers that all only appear as candidates in the same three cells within the column/row/square)
-    // only cell needs to contain all three the other two cells just need to contain at least two of the same three 
-    // as the one with all three
+    // candidate elimination
+    // checks for three cells within the same col/row/sq with exactly the same three (or 2/3) candidates
+    // if found then remove those three candidates from all other cells in that col/row/sq
     void solve_by_naked_triples();
     
     // same as naked pair but other notations are in the cells with the pairs
     void solve_by_hidden_quads();
 
-    // checks for single candidate in column, row, and square ( does not use notations )
+    // cell solver
+    // checks if the other 8 cells in the col/row/sq are already filled in
+    // if they are then fill in the last one
     bool solve_by_sudoku();
 
     bool solve_by_column(uint8_t col, uint8_t cell);
@@ -118,9 +124,15 @@ class sudoku
     bool solve_by_square(uint8_t col, uint8_t row, uint8_t cell);
     
     
-    // checks one square at a time to see if there is only one valid location for a number 
-    // relies on notations
-    bool solve_by_single_candidate();
+    // cell solver
+    // checks if a cell has only one candidate 
+    // if it does then fill it in
+    bool solve_by_naked_single(); 
+    
+    // cell solver
+    // checks each col/row sq for each number to see if there is only one cell with that number as a candidate
+    // if found then fill it in
+    bool solve_by_hidden_single();
     
     // uses candidate elimination by identifying quads
     // (four numbers that all only appear as candidates in the same four cells within the column/row/square)
