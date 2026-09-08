@@ -72,7 +72,7 @@ class sudoku
     void write(uint8_t cell, uint16_t number, type t);
 
     // write a notation for a cell
-    void write_notation(const uint8_t cell, const uint8_t number, const uint8_t state);
+    bool write_notation(const uint8_t cell, const uint8_t number, const uint8_t state);
 
     // helper function for writing to a cell
     // deletes all notation of the relevant number in that row/column/square
@@ -90,16 +90,16 @@ class sudoku
     // candidate elimination
     // checks if the only two candidates for a col/row are within the same square
     // if they are then remove that candidate from the other cells in that square
-    void solve_by_pointing_pairs();
+    bool solve_by_pointing_pairs();
     
     // candidate elimination
     // same as naked pair but other notations are in the cells with the pairs
-    void solve_by_hidden_pairs();
+    bool solve_by_hidden_pairs();
 
     // candidate elimination
     // checks for two cells within the same col/row/sq with exactly the same two candidates
     // if found then remove those two candidates from all other cells in that col/row/sq
-    void solve_by_naked_pairs();
+    bool solve_by_naked_pairs();
     
     // same as naked triples but other notations are in the cells with the pairs
     void solve_by_hidden_triples();

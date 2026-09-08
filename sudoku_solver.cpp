@@ -117,34 +117,13 @@ void sudoku::solve()
         while (solving)
         {
             std::cout << "\t\t\t\t\t\t\tc1\tc2\tn1\tn2\n";
-            solve_by_pointing_pairs();
-            solve_by_hidden_pairs();
-            solve_by_naked_pairs();
+            solving = solve_by_pointing_pairs();
+            solving |= solve_by_hidden_pairs();
+            solving |= solve_by_naked_pairs();
             //solve_by_naked_triples();
-            solving = solve_by_sudoku();
+            solving |= solve_by_sudoku();
             solving |= solve_by_naked_single();
             solving |= solve_by_hidden_single();
-            // if nothing is found check if a second loop of pairs/triples finds anything
-            if (solving == false)
-            {
-                solve_by_pointing_pairs();
-                solve_by_hidden_pairs();
-                solve_by_naked_pairs();
-                //solve_by_naked_triples();
-                solving = solve_by_sudoku();
-                solving |= solve_by_naked_single();
-                solving |= solve_by_hidden_single();
-            }
-            if (solving == false)
-            {
-                solve_by_pointing_pairs();
-                solve_by_hidden_pairs();
-                solve_by_naked_pairs();
-                //solve_by_naked_triples();
-                solving = solve_by_sudoku();
-                solving |= solve_by_naked_single();
-                solving |= solve_by_hidden_single();
-            }
         }
     }
 }
@@ -175,16 +154,26 @@ bool sudoku::is_solvable() const
     return true;
 }
 
-void sudoku::write_notation(const uint8_t cell, const uint8_t number, const uint8_t state)
+bool sudoku::write_notation(const uint8_t cell, const uint8_t number, const uint8_t state)
 {
+    bool ret = false;
     if (state == U8_SC(0))
     {
+        if (get_notation(cell, number))
+        {
+            ret = true;
+        }
         board[cell] &= (U16_SC(~(U8_SC(1) << (U8_SC(3) + number))));
     }
     else if (state == U8_SC(1))
     {
+        if (!get_notation(cell, number))
+        {
+            ret = true;
+        }
         board[cell] |= (U16_SC(U8_SC(1) << (U8_SC(3) + number)));
     }
+    return ret;
 }
 
 void sudoku::update_notation(const uint8_t cell)
@@ -477,8 +466,9 @@ void sudoku::clear_notations()
     }
 }
 
-void sudoku::solve_by_pointing_pairs()
+bool sudoku::solve_by_pointing_pairs()
 {
+    bool ret = false;
     // iterate through all numbers
     for (uint8_t num = 1; num <= U8_SC(9); num++)
     {
@@ -520,7 +510,7 @@ void sudoku::solve_by_pointing_pairs()
                             {
                                 continue;
                             }
-                            write_notation(index, num, 0);
+                            ret |= write_notation(index, num, 0);
                         }
                     }
                 }
@@ -563,13 +553,14 @@ void sudoku::solve_by_pointing_pairs()
                             {
                                 continue;
                             }
-                            write_notation(index, num, 0);
+                            ret |= write_notation(index, num, 0);
                         }
                     }
                 }
             }
         }
     }
+    return ret;
 }
 
 bool sudoku::solve_by_hidden_single()
@@ -677,8 +668,9 @@ bool sudoku::solve_by_hidden_single()
     return false;
 }
 
-void sudoku::solve_by_naked_pairs()
+bool sudoku::solve_by_naked_pairs()
 {
+    bool ret = false;
     // iterate through whole board
     for (uint8_t cell = 0; cell < U8_SC(81); cell++)
     {
@@ -736,8 +728,8 @@ void sudoku::solve_by_naked_pairs()
                         {
                             continue;
                         }
-                        write_notation(k, pair1.front(), 0);
-                        write_notation(k, pair1.back(), 0);
+                        ret |= write_notation(k, pair1.front(), 0);
+                        ret |= write_notation(k, pair1.back(), 0);
                     }
                     found1 = i;
                     found = true;
@@ -778,8 +770,8 @@ void sudoku::solve_by_naked_pairs()
                             {
                                 continue;
                             }
-                            write_notation(temp, pair1.front(), 0);
-                            write_notation(temp, pair1.back(), 0);
+                            ret |= write_notation(temp, pair1.front(), 0);
+                            ret |= write_notation(temp, pair1.back(), 0);
                         }
                         found2 = index;
                         std::cout << "Found a naked pair row:\t\t" << U16_SC(cell) << "\t" << U16_SC(index) << "\t" 
@@ -827,8 +819,8 @@ void sudoku::solve_by_naked_pairs()
                                 {
                                     continue;
                                 }
-                                write_notation(final_index, pair1.front(), 0);
-                                write_notation(final_index, pair1.back(), 0);
+                                ret |= write_notation(final_index, pair1.front(), 0);
+                                ret |= write_notation(final_index, pair1.back(), 0);
                             }
                         }
                         std::cout << "Found a naked pair sq:\t\t" << U16_SC(cell) << "\t" << U16_SC(index)  << "\t" 
@@ -838,6 +830,7 @@ void sudoku::solve_by_naked_pairs()
             }
         }
     }
+    return ret;
 }
 
 // solve_by_naked_pairs, solve_by_naked_triples are stumping me with what's wrong
@@ -1056,8 +1049,9 @@ bool sudoku::tiple_or_quad(const std::vector<uint8_t>& list, const std::vector<u
     return false;
 }
 
-void sudoku::solve_by_hidden_pairs()
+bool sudoku::solve_by_hidden_pairs()
 {
+    bool ret = false;
     // iterate through all columns
     for (uint8_t col = 0; col < U8_SC(9); col++)
     {
@@ -1118,8 +1112,8 @@ void sudoku::solve_by_hidden_pairs()
                         {
                             continue;
                         }
-                        write_notation(pair[0], j, 0);
-                        write_notation(pair[1], j, 0);
+                        ret |= write_notation(pair[0], j, 0);
+                        ret |= write_notation(pair[1], j, 0);
                     }
                 }
             }
@@ -1188,8 +1182,8 @@ void sudoku::solve_by_hidden_pairs()
                         {
                             continue;
                         }
-                        write_notation(pair[0], j, 0);
-                        write_notation(pair[1], j, 0);
+                        ret |= write_notation(pair[0], j, 0);
+                        ret |= write_notation(pair[1], j, 0);
                     }
                 }
             }
@@ -1274,11 +1268,12 @@ void sudoku::solve_by_hidden_pairs()
                         {
                             continue;
                         }
-                        write_notation(pair[0], j, 0);
-                        write_notation(pair[1], j, 0);
+                        ret |= write_notation(pair[0], j, 0);
+                        ret |= write_notation(pair[1], j, 0);
                     }
                 }
             }
         }
     }
+    return ret;
 }
