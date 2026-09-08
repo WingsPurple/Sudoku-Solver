@@ -135,6 +135,16 @@ void sudoku::solve()
                 solving |= solve_by_naked_single();
                 solving |= solve_by_hidden_single();
             }
+            if (solving == false)
+            {
+                solve_by_pointing_pairs();
+                solve_by_hidden_pairs();
+                solve_by_naked_pairs();
+                //solve_by_naked_triples();
+                solving = solve_by_sudoku();
+                solving |= solve_by_naked_single();
+                solving |= solve_by_hidden_single();
+            }
         }
     }
 }
@@ -317,7 +327,7 @@ bool sudoku::solve_by_square(const uint8_t col, const uint8_t row, const uint8_t
     // iterate through rows
     for (uint8_t i = 0; i < U8_SC(3); i++)
     {
-        // iterate within row
+        // iterate within row of the square
         for (uint8_t j = 0; j < U8_SC(3); j++)
         {
             // index is the cell in the square we are checking
@@ -422,7 +432,7 @@ void sudoku::fill_notations_by_sudoku()
         // iterate through rows of the square
         for (uint8_t i = 0; i < U8_SC(3); i++)
         {
-            // iterate within row
+            // iterate within row of the square
             for (uint8_t j = 0; j < U8_SC(3); j++)
             {
                 // index is the cell in the square we are checking
@@ -434,7 +444,7 @@ void sudoku::fill_notations_by_sudoku()
                     // iterate through rows of the square
                     for (uint8_t k = 0; k < U8_SC(3); k++)
                     {
-                        // iterate within row
+                        // iterate within row of the square
                         for (uint8_t l = 0; l < U8_SC(3); l++)
                         {
                             const uint8_t write_index = (s_row * U8_SC(3) + k) * 
@@ -500,13 +510,13 @@ void sudoku::solve_by_pointing_pairs()
                     // go through the square
                     for (uint8_t i = 0; i < U8_SC(3); i++)
                     {
-                        // iterate within row
+                        // iterate within row of the square
                         for (uint8_t j = 0; j < U8_SC(3); j++)
                         {
                             // index is the cell in the square we are checking
                             const uint8_t index = (s_row * U8_SC(3) + i) *
                                 U8_SC(9) + (s_col * U8_SC(3) + j);
-                            if (index == cells[0] || index == cells[1])
+                            if (index == cells[0] || index == cells[1] || (*this)[index] != U8_SC(0))
                             {
                                 continue;
                             }
@@ -543,13 +553,13 @@ void sudoku::solve_by_pointing_pairs()
                     // go through the square
                     for (uint8_t i = 0; i < U8_SC(3); i++)
                     {
-                        // iterate within row
+                        // iterate within row of the square
                         for (uint8_t j = 0; j < U8_SC(3); j++)
                         {
                             // index is the cell in the square we are checking
                             const uint8_t index = (s_row * U8_SC(3) + i) *
                                 U8_SC(9) + (s_col * U8_SC(3) + j);
-                            if (index == cells[0] || index == cells[1])
+                            if (index == cells[0] || index == cells[1] || (*this)[index] != U8_SC(0))
                             {
                                 continue;
                             }
@@ -637,7 +647,7 @@ bool sudoku::solve_by_hidden_single()
                 {
                     break;
                 }
-                // iterate within row
+                // iterate within row of the square
                 for (uint8_t j = 0; j < U8_SC(3); j++)
                 {
                     // index is the cell in the square we are checking
@@ -722,7 +732,7 @@ void sudoku::solve_by_naked_pairs()
                 {
                     for (uint8_t k = col; k < U8_SC(81); k += U8_SC(9))
                     {
-                        if (k == cell || k == i)
+                        if (k == cell || k == i || (*this)[k] != U8_SC(0))
                         {
                             continue;
                         }
@@ -764,7 +774,7 @@ void sudoku::solve_by_naked_pairs()
                         for (uint8_t k = 0; k < U8_SC(9); k++)
                         {
                             const uint8_t temp = row * U8_SC(9) + k;
-                            if (temp == cell || temp == index)
+                            if (temp == cell || temp == index || (*this)[temp] != U8_SC(0))
                             {
                                 continue;
                             }
@@ -780,7 +790,7 @@ void sudoku::solve_by_naked_pairs()
             // check current square
             for (uint8_t i = 0; i < U8_SC(3); i++)
             {
-                // iterate within row
+                // iterate within row of the square
                 for (uint8_t j = 0; j < U8_SC(3); j++)
                 {
                     // make a list of all notations in the current cell
@@ -808,12 +818,12 @@ void sudoku::solve_by_naked_pairs()
                         // iterate through rows
                         for (uint8_t k = 0; k < U8_SC(3); k++)
                         {
-                            // iterate within row
+                            // iterate within row of the square
                             for (uint8_t l = 0; l < U8_SC(3); l++)
                             {
                                 const uint8_t final_index = (s_row * U8_SC(3) + k) * 
                                     U8_SC(9) + (s_col * U8_SC(3) + l);
-                                if (final_index == cell || final_index == index)
+                                if (final_index == cell || final_index == index || (*this)[final_index] != U8_SC(0))
                                 {
                                     continue;
                                 }
@@ -964,7 +974,7 @@ void sudoku::solve_by_naked_triples()
             // check current square
             for (uint8_t i = 0; i < U8_SC(3); i++)
             {
-                // iterate within row
+                // iterate within row of the square
                 for (uint8_t j = 0; j < U8_SC(3); j++)
                 {
                     // make a list of all notations in the current cell
@@ -1000,7 +1010,7 @@ void sudoku::solve_by_naked_triples()
                             // iterate through rows
                             for (uint8_t k = 0; k < U8_SC(3); k++)
                             {
-                                // iterate within row
+                                // iterate within row of the square
                                 for (uint8_t l = 0; l < U8_SC(3); l++)
                                 {
                                     const uint8_t final_index = (s_row * U8_SC(3) + k) * 
@@ -1198,7 +1208,7 @@ void sudoku::solve_by_hidden_pairs()
         std::vector<std::vector<uint8_t>> candidate{};
         for (uint8_t i = 0; i < U8_SC(3); i++)
         {
-            // iterate within row
+            // iterate within row of the square
             for (uint8_t j = 0; j < U8_SC(3); j++)
             {
                 // calculate current cell
