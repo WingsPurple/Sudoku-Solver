@@ -120,7 +120,7 @@ void sudoku::solve()
             solving = solve_by_pointing_pairs();
             solving |= solve_by_hidden_pairs();
             solving |= solve_by_naked_pairs();
-            //solve_by_naked_triples();
+            //solving |= solve_by_naked_triples();
             solving |= solve_by_sudoku();
             solving |= solve_by_naked_single();
             solving |= solve_by_hidden_single();
@@ -835,8 +835,9 @@ bool sudoku::solve_by_naked_pairs()
 
 // solve_by_naked_pairs, solve_by_naked_triples are stumping me with what's wrong
 // I am considering turning them into separate functions for col row square 
-void sudoku::solve_by_naked_triples()
+bool sudoku::solve_by_naked_triples()
 {
+    bool ret = false;
     // iterate through whole board
     for (uint8_t cell = 0; cell < U8_SC(81); cell++)
     {
@@ -904,11 +905,11 @@ void sudoku::solve_by_naked_triples()
                             }
                             for (const auto t : triple1)
                             {
-                                write_notation(k, t, 0);
+                                ret |= write_notation(k, t, 0);
                             }
                         }
-                        std::cout << "Found a naked triple at " << U16_SC(cell) << " " 
-                            << U16_SC(cell2) << " " << U16_SC(i) << '\n';
+                        std::cout << "Found a naked triple at:\t\t" << U16_SC(cell) << "\t" 
+                            << U16_SC(cell2) << "\t" << U16_SC(i) << '\n';
                     }
                 }
             }
@@ -955,11 +956,11 @@ void sudoku::solve_by_naked_triples()
                                 }
                                 for (const auto t : triple1)
                                 {
-                                    write_notation(temp, t, 0);
+                                    ret |= write_notation(temp, t, 0);
                                 }
                             }
-                            std::cout << "Found a naked triple at " << U16_SC(cell) << " " 
-                                << U16_SC(cell2) << " " << U16_SC(index) << '\n';
+                            std::cout << "Found a naked triple at:\t\t" << U16_SC(cell) << "\t" 
+                                << U16_SC(cell2) << "\t" << U16_SC(index) << '\n';
                         }
                     }
                 }
@@ -1014,18 +1015,19 @@ void sudoku::solve_by_naked_triples()
                                     }
                                     for (const auto t : triple1)
                                     {
-                                        write_notation(final_index, t, 0);
+                                        ret |= write_notation(final_index, t, 0);
                                     }
                                 }
                             }
-                            std::cout << "Found a naked triple at " << U16_SC(cell) << " " 
-                                << U16_SC(cell2) << " " << U16_SC(index) << '\n';
+                            std::cout << "Found a naked triple at:\t\t" << U16_SC(cell) << "\t" 
+                                << U16_SC(cell2) << "\t" << U16_SC(index) << '\n';
                         }
                     }
                 }
             }
         }
     }
+    return ret;
 }
 
 bool sudoku::tiple_or_quad(const std::vector<uint8_t>& list, const std::vector<uint8_t>& candidate)

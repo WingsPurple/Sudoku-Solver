@@ -107,7 +107,7 @@ class sudoku
     // candidate elimination
     // checks for three cells within the same col/row/sq with exactly the same three (or 2/3) candidates
     // if found then remove those three candidates from all other cells in that col/row/sq
-    void solve_by_naked_triples();
+    bool solve_by_naked_triples();
     
     // same as naked pair but other notations are in the cells with the pairs
     void solve_by_hidden_quads();
