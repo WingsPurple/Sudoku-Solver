@@ -258,7 +258,7 @@ bool sudoku::solve_by_row(const uint8_t row, const uint8_t cell)
             continue;
         }
         // find every unique number in that row
-        if (std::find(temp.begin(), temp.end() , (*this)[i]) == temp.end())
+        if (std::ranges::find(temp, (*this)[i]) == temp.end())
         {
             temp.emplace_back((*this)[i]);
         }
@@ -267,7 +267,7 @@ bool sudoku::solve_by_row(const uint8_t row, const uint8_t cell)
         {
             for (uint8_t number = 1; number <= U8_SC(9); number++)
             {
-                if (std::find(temp.begin(), temp.end(), number) == temp.end())
+                if (std::ranges::find(temp, number) == temp.end())
                 {
                     write(cell, number, SUDOKU);
                     return true;
@@ -290,7 +290,7 @@ bool sudoku::solve_by_column(const uint8_t col, const uint8_t cell)
             continue;
         }
         // find every unique number in that column
-        if (std::find(temp.begin(), temp.end() , (*this)[i]) == temp.end())
+        if (std::ranges::find(temp, (*this)[i]) == temp.end())
         {
             temp.emplace_back((*this)[i]);
         }
@@ -299,7 +299,7 @@ bool sudoku::solve_by_column(const uint8_t col, const uint8_t cell)
         {
             for (uint8_t number = 1; number <= U8_SC(9); number++)
             {
-                if (std::find(temp.begin(), temp.end(), number) == temp.end())
+                if (std::ranges::find(temp, number) == temp.end())
                 {
                     write(cell, number, SUDOKU);
                     return true;
@@ -327,7 +327,7 @@ bool sudoku::solve_by_square(const uint8_t col, const uint8_t row, const uint8_t
             {
                 continue;
             }
-            if (std::find(temp.begin(), temp.end(), (*this)[index]) == temp.end())
+            if (std::ranges::find(temp, (*this)[index]) == temp.end())
             {
                 temp.emplace_back((*this)[index]);
             }
@@ -338,7 +338,7 @@ bool sudoku::solve_by_square(const uint8_t col, const uint8_t row, const uint8_t
     {
         for (uint8_t number = 1; number <= U8_SC(9); number++)
         {
-            if (std::find(temp.begin(), temp.end() , number) == temp.end())
+            if (std::ranges::find(temp, number) == temp.end())
             {
                 write(cell, number, SUDOKU);
                 return true;
@@ -457,7 +457,7 @@ void sudoku::fill_notations_by_sudoku()
 
 void sudoku::clear_notations()
 {
-    for (int i = U8_SC(0); i < U8_SC(81); i++)
+    for (uint8_t i = 0; i < U8_SC(81); i++)
     {
         if ((board[i] & MASK) == U8_SC(0))
         {
