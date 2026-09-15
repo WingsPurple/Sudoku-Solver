@@ -946,7 +946,7 @@ bool sudoku::solve_by_naked_triples()
                     }
                 }
             }
-            // we can skip the row check if the pair is found in a column
+            // we can skip the row check if the triple is found in a column
             if (found == false)
             {
                 // check current row
@@ -1004,6 +1004,7 @@ bool sudoku::solve_by_naked_triples()
                 }
             }
             // check current square
+            // triple can be in a col/row and also in the same square
             for (uint8_t i = 0; i < U8_SC(3); i++)
             {
                 // iterate within row of the square
