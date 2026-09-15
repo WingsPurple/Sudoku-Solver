@@ -116,7 +116,7 @@ void sudoku::solve()
         fill_notations_by_sudoku();
         while (solving)
         {
-            std::cout << "\t\t\t\t\t\t\tc1\tc2\tn1\tn2\n";
+            std::cout << "\t\t\t\t\t\t\t\tc1\tc2\tn1\tn2\n";
             solving = solve_by_pointing_pairs();
             solving |= solve_by_hidden_pairs();
             solving |= solve_by_naked_pairs();
@@ -469,6 +469,7 @@ void sudoku::clear_notations()
 bool sudoku::solve_by_pointing_pairs()
 {
     bool ret = false;
+    bool print = false;
     // iterate through all numbers
     for (uint8_t num = 1; num <= U8_SC(9); num++)
     {
@@ -495,8 +496,6 @@ bool sudoku::solve_by_pointing_pairs()
                 if (s_row == cells[1] / U8_SC(9) / U8_SC(3) &&
                     s_col == cells[1] % U8_SC(9) / U8_SC(3))
                 {
-                    std::cout << "Pointing pair found col:\t" 
-                                << U16_SC(cells[0]) << "\t" << U16_SC(cells[1]) << "\t" << U16_SC(num) << '\n';
                     // go through the square
                     for (uint8_t i = 0; i < U8_SC(3); i++)
                     {
@@ -510,8 +509,15 @@ bool sudoku::solve_by_pointing_pairs()
                             {
                                 continue;
                             }
-                            ret |= write_notation(index, num, 0);
+                            print = write_notation(index, num, 0);
                         }
+                    }
+                    if (print)
+                    {
+                        std::cout << "Pointing pair found col:\t\t" 
+                               << U16_SC(cells[0]) << "\t" << U16_SC(cells[1]) << "\t" << U16_SC(num) << '\n';
+                        print = false;
+                        ret |= print;
                     }
                 }
             }
@@ -538,8 +544,6 @@ bool sudoku::solve_by_pointing_pairs()
                 if (s_row == cells[1] / U8_SC(9) / U8_SC(3) &&
                     s_col == cells[1] % U8_SC(9) / U8_SC(3))
                 {
-                    std::cout << "Pointing pair found row:\t" 
-                                << U16_SC(cells[0]) << "\t" << U16_SC(cells[1]) << "\t" << U16_SC(num) << '\n';
                     // go through the square
                     for (uint8_t i = 0; i < U8_SC(3); i++)
                     {
@@ -553,8 +557,14 @@ bool sudoku::solve_by_pointing_pairs()
                             {
                                 continue;
                             }
-                            ret |= write_notation(index, num, 0);
+                            print = write_notation(index, num, 0);
                         }
+                    }
+                    if (print)
+                    {
+                        std::cout << "Pointing pair found row:\t\t" 
+                                << U16_SC(cells[0]) << "\t" << U16_SC(cells[1]) << "\t" << U16_SC(num) << '\n';
+                        ret |= print;
                     }
                 }
             }
@@ -671,6 +681,7 @@ bool sudoku::solve_by_hidden_single()
 bool sudoku::solve_by_naked_pairs()
 {
     bool ret = false;
+    bool print = false;
     // iterate through whole board
     for (uint8_t cell = 0; cell < U8_SC(81); cell++)
     {
@@ -728,13 +739,19 @@ bool sudoku::solve_by_naked_pairs()
                         {
                             continue;
                         }
-                        ret |= write_notation(k, pair1.front(), 0);
-                        ret |= write_notation(k, pair1.back(), 0);
+                        print |= write_notation(k, pair1.front(), 0);
+                        print |= write_notation(k, pair1.back(), 0);
                     }
                     found1 = i;
                     found = true;
-                    std::cout << "Found a naked pair col:\t\t" << U16_SC(cell) << "\t" << U16_SC(i)  << "\t" 
-                        << U16_SC(pair1.front()) << "\t" << U16_SC(pair1.back()) <<'\n';
+                    if (print)
+                    {
+                        std::cout << "Found a naked pair col:\t\t\t" << U16_SC(cell) << "\t" << U16_SC(i)  << "\t" 
+                            << U16_SC(pair1.front()) << "\t" << U16_SC(pair1.back()) <<'\n';
+                        ret |= print;
+                        print = false;
+                    }
+                   
                 }
             }
             // we can skip the row check if the pair is found in a column
@@ -770,12 +787,17 @@ bool sudoku::solve_by_naked_pairs()
                             {
                                 continue;
                             }
-                            ret |= write_notation(temp, pair1.front(), 0);
-                            ret |= write_notation(temp, pair1.back(), 0);
+                            print |= write_notation(temp, pair1.front(), 0);
+                            print |= write_notation(temp, pair1.back(), 0);
                         }
                         found2 = index;
-                        std::cout << "Found a naked pair row:\t\t" << U16_SC(cell) << "\t" << U16_SC(index) << "\t" 
-                            << U16_SC(pair1.front()) << "\t" << U16_SC(pair1.back()) << '\n';
+                        if (print)
+                        {
+                            std::cout << "Found a naked pair row:\t\t\t" << U16_SC(cell) << "\t" << U16_SC(index) << "\t" 
+                                << U16_SC(pair1.front()) << "\t" << U16_SC(pair1.back()) << '\n';
+                            ret |= print;
+                            print = false;
+                        }
                     }
                 }
             }
@@ -819,12 +841,17 @@ bool sudoku::solve_by_naked_pairs()
                                 {
                                     continue;
                                 }
-                                ret |= write_notation(final_index, pair1.front(), 0);
-                                ret |= write_notation(final_index, pair1.back(), 0);
+                                print |= write_notation(final_index, pair1.front(), 0);
+                                print |= write_notation(final_index, pair1.back(), 0);
                             }
                         }
-                        std::cout << "Found a naked pair sq:\t\t" << U16_SC(cell) << "\t" << U16_SC(index)  << "\t" 
-                            << U16_SC(pair1.front()) << "\t" << U16_SC(pair1.back()) << '\n';
+                        if (print)
+                        {
+                            std::cout << "Found a naked pair sq:\t\t\t" << U16_SC(cell) << "\t" << U16_SC(index)  << "\t" 
+                                << U16_SC(pair1.front()) << "\t" << U16_SC(pair1.back()) << '\n';
+                            ret |= print;
+                            print = false;
+                        }
                     }
                 }
             }
@@ -838,6 +865,7 @@ bool sudoku::solve_by_naked_pairs()
 bool sudoku::solve_by_naked_triples()
 {
     bool ret = false;
+    bool print = false;
     // iterate through whole board
     for (uint8_t cell = 0; cell < U8_SC(81); cell++)
     {
@@ -905,11 +933,16 @@ bool sudoku::solve_by_naked_triples()
                             }
                             for (const auto t : triple1)
                             {
-                                ret |= write_notation(k, t, 0);
+                                print |= write_notation(k, t, 0);
                             }
                         }
-                        std::cout << "Found a naked triple at:\t\t" << U16_SC(cell) << "\t" 
-                            << U16_SC(cell2) << "\t" << U16_SC(i) << '\n';
+                        if (print)
+                        {
+                            std::cout << "Found a naked triple at col:\t" << U16_SC(cell) << "\t" 
+                                << U16_SC(cell2) << "\t" << U16_SC(i) << '\n';
+                            ret |= print;
+                            print = false;
+                        }
                     }
                 }
             }
@@ -956,11 +989,16 @@ bool sudoku::solve_by_naked_triples()
                                 }
                                 for (const auto t : triple1)
                                 {
-                                    ret |= write_notation(temp, t, 0);
+                                    print |= write_notation(temp, t, 0);
                                 }
                             }
-                            std::cout << "Found a naked triple at:\t\t" << U16_SC(cell) << "\t" 
-                                << U16_SC(cell2) << "\t" << U16_SC(index) << '\n';
+                            if (print)
+                            {
+                                std::cout << "Found a naked triple at row:\t" << U16_SC(cell) << "\t" 
+                                    << U16_SC(cell2) << "\t" << U16_SC(index) << '\n';
+                                ret |= print;
+                                print = false;
+                            }
                         }
                     }
                 }
@@ -1015,12 +1053,17 @@ bool sudoku::solve_by_naked_triples()
                                     }
                                     for (const auto t : triple1)
                                     {
-                                        ret |= write_notation(final_index, t, 0);
+                                        print |= write_notation(final_index, t, 0);
                                     }
                                 }
                             }
-                            std::cout << "Found a naked triple at:\t\t" << U16_SC(cell) << "\t" 
-                                << U16_SC(cell2) << "\t" << U16_SC(index) << '\n';
+                            if (print)
+                            {
+                                std::cout << "Found a naked triple at sq:\t\t" << U16_SC(cell) << "\t" 
+                                    << U16_SC(cell2) << "\t" << U16_SC(index) << '\n';
+                                ret |= print;
+                                print = false;
+                            }
                         }
                     }
                 }
@@ -1054,6 +1097,7 @@ bool sudoku::tiple_or_quad(const std::vector<uint8_t>& list, const std::vector<u
 bool sudoku::solve_by_hidden_pairs()
 {
     bool ret = false;
+    bool print = false;
     // iterate through all columns
     for (uint8_t col = 0; col < U8_SC(9); col++)
     {
@@ -1106,16 +1150,21 @@ bool sudoku::solve_by_hidden_pairs()
                 // if yes remove all other candidates from the two cells
                 if (pair[0] == pair2[0] && pair[1] == pair2[1] && pair[2] != pair2[2])
                 {
-                    std::cout << "Found a hidden pair col:\t" << U16_SC(pair[0]) << "\t" << U16_SC(pair[1])  << "\t" 
-                        << U16_SC(pair[2]) << "\t" << U16_SC(pair2[2]) << '\n';
                     for (uint8_t j = 1; j <= U8_SC(9); j++)
                     {
                         if (j == pair[2] || j == pair2[2])
                         {
                             continue;
                         }
-                        ret |= write_notation(pair[0], j, 0);
-                        ret |= write_notation(pair[1], j, 0);
+                        print |= write_notation(pair[0], j, 0);
+                        print |= write_notation(pair[1], j, 0);
+                    }
+                    if (print)
+                    {
+                        std::cout << "Found a hidden pair col:\t\t" << U16_SC(pair[0]) << "\t" << U16_SC(pair[1])  << "\t" 
+                        << U16_SC(pair[2]) << "\t" << U16_SC(pair2[2]) << '\n';
+                        ret |= print;
+                        print = false;
                     }
                 }
             }
@@ -1176,16 +1225,21 @@ bool sudoku::solve_by_hidden_pairs()
                 // if yes remove all other candidates from the two cells
                 if (pair[0] == pair2[0] && pair[1] == pair2[1] && pair[2] != pair2[2])
                 {
-                    std::cout << "Found a hidden pair row:\t" << U16_SC(pair[0]) << "\t" << U16_SC(pair[1])  << "\t" 
-                        << U16_SC(pair[2]) << "\t" << U16_SC(pair2[2]) << '\n';
                     for (uint8_t j = 1; j <= U8_SC(9); j++)
                     {
                         if (j == pair[2] || j == pair2[2])
                         {
                             continue;
                         }
-                        ret |= write_notation(pair[0], j, 0);
-                        ret |= write_notation(pair[1], j, 0);
+                        print |= write_notation(pair[0], j, 0);
+                        print |= write_notation(pair[1], j, 0);
+                    }
+                    if (print)
+                    {
+                        std::cout << "Found a hidden pair row:\t\t" << U16_SC(pair[0]) << "\t" << U16_SC(pair[1])  << "\t" 
+                            << U16_SC(pair[2]) << "\t" << U16_SC(pair2[2]) << '\n';
+                        ret |= print;
+                        print = false;
                     }
                 }
             }
@@ -1262,16 +1316,21 @@ bool sudoku::solve_by_hidden_pairs()
                 // if yes remove all other candidates from the two cells
                 if (pair[0] == pair2[0] && pair[1] == pair2[1] && pair[2] != pair2[2])
                 {
-                    std::cout << "Found a hidden pair sq:\t" << U16_SC(pair[0]) << "\t" << U16_SC(pair[1])  << "\t" 
-                        << U16_SC(pair[2]) << "\t" << U16_SC(pair2[2]) << '\n';
                     for (uint8_t j = 1; j <= U8_SC(9); j++)
                     {
                         if (j == pair[2] || j == pair2[2])
                         {
                             continue;
                         }
-                        ret |= write_notation(pair[0], j, 0);
-                        ret |= write_notation(pair[1], j, 0);
+                        print |= write_notation(pair[0], j, 0);
+                        print |= write_notation(pair[1], j, 0);
+                    }
+                    if (print)
+                    {
+                        std::cout << "Found a hidden pair sq:\t\t" << U16_SC(pair[0]) << "\t" << U16_SC(pair[1])  << "\t" 
+                            << U16_SC(pair[2]) << "\t" << U16_SC(pair2[2]) << '\n';
+                        ret |= print;
+                        print = false;
                     }
                 }
             }
