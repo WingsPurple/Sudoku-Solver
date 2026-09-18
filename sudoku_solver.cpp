@@ -54,6 +54,7 @@ void sudoku::print_board(const uint8_t highlight, const type t) const
         // highlight the recently written number as red
         if (i == highlight)
         {
+            //std::print("\033[31m {} \033[0m ", (*this)[i]);
             std::cout << "\033[31m" << U16_SC((*this)[i]) << "\033[0m ";
         }
         else
@@ -84,6 +85,7 @@ void sudoku::diff(const sudoku& rhs) const
         // highlight the recently written number as red
         if ((*this)[i] != rhs.board[i])
         {
+            //std::print("\033[31m {} \033[0m ", (*this)[i]);
             std::cout << "\033[31m" << U16_SC((*this)[i]) << "\033[0m ";
         }
         else

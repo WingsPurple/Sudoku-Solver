@@ -10,6 +10,8 @@
  *  Be performant (low memory usage, fast calculations, low file size)
  *  Be available and functional through a website
  *  Have fun and learn :3
+ *  
+ *  Needs to be run through CMake to run c++ 23 for print
  *
  *  Each solve function stops the moment it finds a single success
  *  Priority is as follows: Column > Row > Square
@@ -49,6 +51,7 @@
 #include <cstdint>
 #include <algorithm>
 #include <ranges>
+//#include <print>
 
 #define MASK 0x0F
 #define U8_SC static_cast<uint8_t>
