@@ -527,8 +527,8 @@ bool sudoku::solve_by_pointing_pairs()
                         std::cout << "Pointing pair found col:\t\t" 
                                << U16_SC(cells[0]) << "\t" << U16_SC(cells[1]) << "\t" << U16_SC(num) << '\n';
                     }
-                    print = false;
                     ret |= print;
+                    print = false;
                 }
             }
         }
@@ -576,6 +576,7 @@ bool sudoku::solve_by_pointing_pairs()
                                 << U16_SC(cells[0]) << "\t" << U16_SC(cells[1]) << "\t" << U16_SC(num) << '\n';
                     }
                     ret |= print;
+                    print = false;
                 }
             }
         }
