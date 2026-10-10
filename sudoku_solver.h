@@ -52,13 +52,21 @@
 #include <algorithm>
 #include <ranges>
 //#include <print>
-
-#define MASK 0x0F
 #define U8_SC static_cast<uint8_t>
 #define U16_SC static_cast<uint16_t>
 
+// 7 bytes of padding wasted but not sure if I can do anything about that
 class sudoku
 {
+    // the first 4 bits of the uint16_t represent the number in the cell
+    // the next 9 represent the notations for numbers 1-9
+    // if it is a possible candidate that bit is set to 1 otherwise it is set to 0
+    std::vector<uint16_t> board_;
+    
+    // whether to print steps when solving
+    bool print_ = false;
+    
+    // enum for solve type
     enum type : uint8_t
     {
         NONE,
@@ -66,10 +74,11 @@ class sudoku
         HIDDEN_SINGLE,
         NAKED_SINGLE
     };
-    // the first 4 bits of the uint16_t represent the number in the cell
-    // the next 9 represent the notations for numbers 1-9
-    // if it is a possible candidate that bit is set to 1 otherwise it is set to 0
-    std::vector<uint16_t> board;
+    
+    enum : uint8_t
+    {
+        mask = 0x0F
+    };
     
     // write to a cell
     void write(uint8_t cell, uint16_t number, type t);
@@ -154,15 +163,16 @@ class sudoku
     void solve_by_swordfish();
 public:
     // initialize empty board
-    sudoku()
+    sudoku(const bool print = false)
     {
-        board.resize(0, 0);
+        board_.resize(0, 0);
+        print_ = print;
     }
     
     // initialize from file
     explicit sudoku(const char* filename)
     {
-        board.resize(0, 0);
+        board_.resize(0, 0);
         read(filename);
     }
     
@@ -175,37 +185,37 @@ public:
     // prints the difference between two boards
     void diff(const sudoku& rhs) const;
     
-    // determines if the current board is solvable
-    bool is_solvable() const;
-    
     // keep going until the board is solved
-    void solve();
+    bool solve();
 
-    // solve one step
-    bool solve_step();
+    // solve and print steps
+    void solve_with_steps();
 
     // return only the 4 bits that represent the number
     // not really happy having to use (*this)[] when reading and board[] when writing
     // not sure how to make it so that I can just use one or the other
     // it does make it so writing automatically removes the notations which is nice
     uint8_t operator[](const size_t index) {
-        return board[index] & MASK;
+        return board_[index] & mask;
     }
     
     // const version
     uint8_t operator[](const size_t index) const {
-        return board[index] & MASK;
+        return board_[index] & mask;
     }
     
     // overload comparison operator so we can compare boards
     bool operator==(const sudoku& rhs) const
     {
-        return board == rhs.board;
+        return board_ == rhs.board_;
     }
     
     // overload comparison operator so we can compare boards
     bool operator!=(const sudoku& rhs) const
     {
-        return board != rhs.board;
+        return board_ != rhs.board_;
     }
 };
+
+// determines if the current board is solvable
+bool is_solvable(sudoku& board);

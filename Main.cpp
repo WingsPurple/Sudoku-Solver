@@ -8,7 +8,8 @@ uint8_t test(const char* board_file, const char* solution_file)
     }
     std::cout << "Starting Board " << "\n";
     board.print_board();
-    board.solve();
+    //board.solve();
+    board.solve_with_steps();
     sudoku solution;
     solution.read(solution_file);
     if (solution != board)
@@ -18,6 +19,7 @@ uint8_t test(const char* board_file, const char* solution_file)
         return 0;
     }
     std::cout << "Solution is correct " << std::endl;
+    board.print_board();
     return -1;
 }
 
