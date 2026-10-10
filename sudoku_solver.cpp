@@ -166,6 +166,7 @@ bool sudoku::is_solvable(sudoku& board)
 
 bool sudoku::write_notation(const uint8_t cell, const uint8_t number, const uint8_t state)
 {
+    // did the write make a change
     bool ret = false;
     if (state == U8_SC(0))
     {
@@ -478,6 +479,7 @@ void sudoku::clear_notations()
 
 bool sudoku::solve_by_pointing_pairs()
 {
+    // did we find any pointing pairs
     bool ret = false;
     bool print = false;
     // iterate through all numbers
@@ -691,6 +693,7 @@ bool sudoku::solve_by_hidden_single()
 
 bool sudoku::solve_by_naked_pairs()
 {
+    // did we find any naked pairs
     bool ret = false;
     bool print = false;
     // iterate through whole board
@@ -874,6 +877,7 @@ bool sudoku::solve_by_naked_pairs()
 // I am considering turning them into separate functions for col row square 
 bool sudoku::solve_by_naked_triples()
 {
+    // did we find any naked triples
     bool ret = false;
     bool print = false;
     // iterate through whole board
@@ -1107,6 +1111,7 @@ bool sudoku::tiple_or_quad(const std::vector<uint8_t>& list, const std::vector<u
 
 bool sudoku::solve_by_hidden_pairs()
 {
+    // did we find any hidden pairs
     bool ret = false;
     bool print = false;
     // iterate through all columns

@@ -12,6 +12,8 @@
  *  Have fun and learn :3
  *  
  *  Needs to be run through CMake to run c++ 23 for print
+ *  
+ *  The value 100 is used for unset values since I can't use -1 with uint8_t and it is beyond the board size of 81
  *
  *  Each solve function stops the moment it finds a single success
  *  Priority is as follows: Column > Row > Square
@@ -42,7 +44,7 @@
  *  I imposed on myself so :3
  *  Might try to do a minimum run time version after
  *
- *  From what I understand everything gets converted to 64 bits in the ALU so the only memory it saves would be in ram
+ *  From what I understand everything gets converted to 64 bits in the ALU so the only memory it saves would be in ram/cache
  */
 #pragma once
 #include <iostream>
@@ -61,6 +63,7 @@ class sudoku
     // the first 4 bits of the uint16_t represent the number in the cell
     // the next 9 represent the notations for numbers 1-9
     // if it is a possible candidate that bit is set to 1 otherwise it is set to 0
+    // the 14th bit is set to 1 if it is invalid upon calling is_valid()
     std::vector<uint16_t> board_;
     
     // whether to print steps when solving
@@ -192,6 +195,7 @@ public:
     void solve_with_steps();
 
     // check if the current board is a valid board state
+    // sets the 14th bit in any cell that is invalid
     bool is_valid();
     
     // check if the current board is a valid board and is complete
