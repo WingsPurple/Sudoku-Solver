@@ -186,10 +186,19 @@ public:
     void diff(const sudoku& rhs) const;
     
     // keep going until the board is solved
-    bool solve();
+    void solve();
 
     // solve and print steps
     void solve_with_steps();
+
+    // check if the current board is a valid board state
+    bool is_valid();
+    
+    // check if the current board is a valid board and is complete
+    bool is_complete();
+    
+    // determines if the current board is solvable
+    static bool is_solvable(sudoku& board);
 
     // return only the 4 bits that represent the number
     // not really happy having to use (*this)[] when reading and board[] when writing
@@ -216,6 +225,3 @@ public:
         return board_ != rhs.board_;
     }
 };
-
-// determines if the current board is solvable
-bool is_solvable(sudoku& board);

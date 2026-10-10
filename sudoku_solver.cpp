@@ -113,7 +113,7 @@ void sudoku::diff(const sudoku& rhs) const
     rhs.print_board();
 }
 
-bool sudoku::solve()
+void sudoku::solve()
 {
     bool solving = true;
     fill_notations_by_sudoku();
@@ -127,7 +127,6 @@ bool sudoku::solve()
         solving |= solve_by_naked_single();
         solving |= solve_by_hidden_single();
     }
-    return false;
 }
 
 void sudoku::solve_with_steps()
@@ -149,9 +148,20 @@ void sudoku::solve_with_steps()
     print_ = false;
 }
 
-bool is_solvable(sudoku& board)
+bool sudoku::is_valid()
 {
-    return board.solve();
+    return false;
+}
+
+bool sudoku::is_complete()
+{
+    return false;
+}
+
+bool sudoku::is_solvable(sudoku& board)
+{
+    board.solve();
+    return board.is_complete();
 }
 
 bool sudoku::write_notation(const uint8_t cell, const uint8_t number, const uint8_t state)
