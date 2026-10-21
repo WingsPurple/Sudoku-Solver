@@ -18,6 +18,8 @@ uint8_t test(const char* board_file, const char* solution_file)
     {
         std::cout << "Solution is incorrect \n";
         board.diff(solution);
+        board.is_valid();
+        board.print_board();
         return 0;
     }
     std::cout << "Solution is correct " << std::endl;

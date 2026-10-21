@@ -34,6 +34,8 @@ void sudoku::write(const uint8_t cell, const uint16_t number, const type t)
     update_notation(cell);
     if (print_)
     {
+        // @TODO run is_valid before printing to make sure my functions work as intended
+        is_valid();
         print_board(cell, t);
     }
 }
@@ -54,11 +56,21 @@ void sudoku::print_board(const uint8_t highlight, const type t) const
     }
     for (uint8_t i = 0; i < U8_SC(81); i++)
     {
-        // highlight the recently written number as red
-        if (i == highlight)
+        // highlight invalid cell that is recently written as blue
+        if (get_notation(i, 10) && i == highlight)
+        {
+            std::cout << "\033[34m" << U16_SC((*this)[i]) << "\033[0m ";
+        }
+        // highlight invalid cells as red
+        else if (get_notation(i, 10))
+        {
+            std::cout << "\033[31m" << U16_SC((*this)[i]) << "\033[0m ";
+        }
+        // highlight the recently written number as blue
+        else if (i == highlight)
         {
             //std::print("\033[31m {} \033[0m ", (*this)[i]);
-            std::cout << "\033[31m" << U16_SC((*this)[i]) << "\033[0m ";
+            std::cout << "\033[32m" << U16_SC((*this)[i]) << "\033[0m ";
         }
         else
         {
@@ -150,12 +162,69 @@ void sudoku::solve_with_steps()
 
 bool sudoku::is_valid()
 {
-    return false;
+    // iterate through the board
+    bool valid = true;
+    for (uint8_t i = 0; i < U8_SC(81); i++)
+    {
+        if ((*this)[i] != U16_SC(0))
+        {
+            // iterate through column
+            for (uint8_t j = i + 9; j < U8_SC(81); j += U8_SC(9))
+            {
+                // if a number appears twice in the same column
+                if ((*this)[i] == (*this)[j])
+                {
+                    valid |= write_notation(i, 10, true);
+                    valid |= write_notation(j, 10, true);
+                }
+            }
+            // iterate through row
+            for (uint8_t j = i + 1; j % 9 != 0; j++)
+            {
+                // if a number appears twice in the same row
+                if ((*this)[i] == (*this)[j])
+                {
+                    valid |= write_notation(i, 10, true);
+                    valid |= write_notation(j, 10, true);
+                }
+            }
+            // iterate through square
+            const uint8_t s_col = (i % U8_SC(9)) / U8_SC(3);
+            const uint8_t s_row = (i / U8_SC(9)) / U8_SC(3);
+            for (uint8_t j = 0; j < U8_SC(3); j++)
+            {
+                for (uint8_t k = 0; k < U8_SC(3); k++)
+                {
+                    const uint8_t index = (s_row * U8_SC(3) + j) *
+                        U8_SC(9) + (s_col * U8_SC(3) + k);
+                    if (index == i)
+                    {
+                        continue;
+                    }
+                    if ((*this)[i] == (*this)[index])
+                    {
+                        valid |= write_notation(i, 10, true);
+                        valid |= write_notation(index, 10, true);
+                    }
+                }
+            }
+        }
+    } 
+    return !valid;
 }
 
 bool sudoku::is_complete()
 {
-    return false;
+    bool full = true;
+    for (uint8_t i = 0; i < U8_SC(81); i++)
+    {
+        if ((*this)[i] == 0)
+        {
+            full = false;
+            break;
+        }
+    }
+    return full && is_valid();
 }
 
 bool sudoku::is_solvable(sudoku& board)
@@ -225,7 +294,6 @@ bool sudoku::get_notation(const uint8_t cell, const uint8_t number) const
 bool sudoku::solve_by_sudoku()
 {
     // iterate through the board
-    // if a cell is filled new solutions may have become available so we check again
     for (uint8_t i = 0; i < U8_SC(81); i++)
     {
         // an empty cell is found

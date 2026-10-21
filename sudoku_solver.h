@@ -94,7 +94,7 @@ class sudoku
     void update_notation(const uint8_t cell);
 
     // read a notation for a cell
-    bool get_notation(const uint8_t cell, const uint8_t number) const;
+    [[nodiscard]] bool get_notation(const uint8_t cell, const uint8_t number) const;
 
     // fills in all notations using only sudoku (row, column, square elimination)
     void fill_notations_by_sudoku();
@@ -173,10 +173,21 @@ public:
     }
     
     // initialize from file
-    explicit sudoku(const char* filename)
+    sudoku(const char* filename, const bool print = false)
     {
         board_.resize(0, 0);
         read(filename);
+        print_ = print;
+    }
+    
+    void set_print(const bool print)
+    {
+        print_ = print;
+    }
+
+    [[nodiscard]] bool get_print() const
+    {
+        return print_;
     }
     
     // read in the board from a file
