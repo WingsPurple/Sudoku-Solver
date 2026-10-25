@@ -9,6 +9,11 @@ bool sudoku::read(const char* filename)
         {
             uint16_t temp;
             file >> temp;
+            if (temp > 9)
+            {
+                std::cout << "Cell value higher than 9" << std::endl;
+                return false;
+            }
             board_.emplace_back(temp);
         }
         file.close();
